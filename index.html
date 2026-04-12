@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Happy+Monkey&display=swap" rel="stylesheet">
+    <title>KiwiPlay - Kids Games</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🥝</span>
+            <span class="logo-text">KiwiPlay</span>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="games" id="games"></section>
+    </main>
+
+    <footer class="footer">
+        <p>Made with 🥝 for kids everywhere</p>
+    </footer>
+
+    <script>
+        const gamesContainer = document.getElementById('games');
+
+        fetch('games.json')
+            .then(res => res.json())
+            .then(data => {
+                data.games.forEach(game => {
+                    const card = document.createElement(game.comingSoon ? 'div' : 'a');
+                    card.className = 'game-card' + (game.comingSoon ? ' coming-soon' : '');
+                    if (!game.comingSoon) card.href = game.url;
+
+                    const imageHtml = game.image ? `<img src="${game.image}" alt="${game.title}" class="game-card-image">` : '';
+                    const iconHtml = game.icon && !game.image ? `<div class="game-icon">${game.icon}</div>` : '';
+
+                    card.innerHTML = `
+                        ${imageHtml}
+                        <div class="game-card-content">
+                            ${iconHtml}
+                            <div class="game-info">
+                                <h2 class="game-title">${game.title}</h2>
+                                <p class="game-desc">${game.description}</p>
+                            </div>
+                        </div>
+                    `;
+                    gamesContainer.appendChild(card);
+                });
+            });
+    </script>
+</body>
+</html>

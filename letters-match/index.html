@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Letter Match</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Cormorant+Garamond:wght@700;900&family=Playwrite+PL:wght@400&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="https://play.kiwiprojekt.pl" class="menu-back-btn">🥝 KiwiPlay</a>
+
+  <!-- Main Menu -->
+  <div class="main-menu" id="mainMenu">
+    <h1 class="menu-title">Letter Match</h1>
+    <div class="level-grid">
+      <div class="level-card" data-level="easy">
+        <div class="level-card-title">1</div>
+      </div>
+      <div class="level-card" data-level="medium">
+        <div class="level-card-title">2</div>
+      </div>
+      <div class="level-card" data-level="hard">
+        <div class="level-card-title">3</div>
+      </div>
+      <div class="level-card" data-level="fun">
+        <div class="level-card-title">4</div>
+      </div>
+      <div class="level-card" data-level="mixed">
+        <div class="level-card-title">5</div>
+      </div>
+      <div class="level-card" data-level="wild">
+        <div class="level-card-title">6</div>
+      </div>
+      <div class="level-card infinite" data-level="infinite">
+        <div class="level-card-title">∞</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="game-screen hidden" id="gameScreen">
+    <div class="header">
+      <button class="back-btn" id="backBtn">← Menu</button>
+      <div class="score-display">
+        <span class="score-label">Score:</span>
+        <span id="score">0</span>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="game-area">
+      <div class="target-letter" id="target"></div>
+      <div class="cards-container" id="cards"></div>
+    </div>
+  </div>
+
+  <!-- Level Complete Popup -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup-content">
+      <h2 class="popup-title">Great Job!</h2>
+      <div class="popup-buttons">
+        <button class="popup-btn back" id="popupBack">← Back</button>
+        <button class="popup-btn next" id="popupNext">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

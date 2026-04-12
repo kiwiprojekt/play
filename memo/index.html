@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Memo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Borel&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <section id="mainScreen" class="screen active">
+      <header class="toolbar menu-toolbar">
+        <a href="https://play.kiwiprojekt.pl" class="icon-button menu-back">🥝 KiwiPlay</a>
+        <div class="menu-spacer"></div>
+        <button id="muteButtonMenu" class="icon-button" type="button" aria-pressed="false"></button>
+      </header>
+      <h1 class="title">Memo Game</h1>
+      <div class="level-grid">
+        <button type="button" class="level-button" data-level="1"></button>
+        <button type="button" class="level-button" data-level="2"></button>
+        <button type="button" class="level-button" data-level="3"></button>
+        <button type="button" class="level-button" data-level="4"></button>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <header class="toolbar">
+        <button id="backButton" class="icon-button" type="button">← Back</button>
+        <div id="levelLabel" class="level-label">Transportation</div>
+        <button id="muteButton" class="icon-button" type="button" aria-pressed="false"></button>
+      </header>
+      <div class="board-wrap">
+        <section id="board" class="board" aria-label="Memory game board"></section>
+      </div>
+    </section>
+  </main>
+
+  <div id="finishPopup" class="popup hidden" role="dialog" aria-modal="true" aria-labelledby="finishTitle">
+    <div class="popup-content">
+      <h2 id="finishTitle">Great job!</h2>
+      <div class="popup-actions">
+        <button id="exitButton" type="button">←</button>
+        <button id="nextButton" type="button">
+          <span class="progress-bar"></span>
+          <span class="button-text">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

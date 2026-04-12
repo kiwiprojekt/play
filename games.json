@@ -1,0 +1,31 @@
+{
+  "games": [
+    {
+      "id": "space-maze",
+      "title": "Space Maze",
+      "description": "Navigate through cosmic tunnels",
+      "icon": "🚀",
+      "image": "space-maze/cover.png",
+      "url": "space-maze/",
+      "comingSoon": false
+    },
+    {
+      "id": "memo",
+      "title": "Memory Match",
+      "description": "Find matching pairs",
+      "icon": "🎴",
+      "image": "memo/cover.png",
+      "url": "memo/",
+      "comingSoon": false
+    },
+    {
+      "id": "letter-match",
+      "title": "Letter Match",
+      "description": "Match the letters",
+      "icon": "🔤",
+      "image": "letters-match/cover.png",
+      "url": "letters-match/",
+      "comingSoon": false
+    }
+  ]
+}
