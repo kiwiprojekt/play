@@ -13,7 +13,7 @@ class GameScene extends Phaser.Scene {
         this.player = null;
         this.goal = null;
         this.playerCell = { x: 0, y: 0 };
-        this.lastDirection = 'right';
+        this.lastDirection = 'top';
         this.isGameOver = false;
         this.moveQueue = [];
         this.isAnimating = false;

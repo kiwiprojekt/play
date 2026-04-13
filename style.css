@@ -140,10 +140,6 @@ body {
 }
 
 @media (max-width: 480px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-
     .games {
         overflow-x: auto;
         justify-content: flex-start;

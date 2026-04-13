@@ -245,6 +245,19 @@ function showGame() {
   mainScreen.classList.remove("active");
   gameScreen.classList.add("active");
 }
+function getBoardAspect(pairs) {
+  if (pairs === 6) return 4 / 3;
+  if (pairs === 10) return 5 / 4;
+  if (pairs === 12) return 6 / 4;
+  return 1;
+}
+function getBoardAspectCss(pairs) {
+  const aspect = getBoardAspect(pairs);
+  if (aspect === 4 / 3) return "4 / 3";
+  if (aspect === 5 / 4) return "5 / 4";
+  if (aspect === 6 / 4) return "6 / 4";
+  return "1 / 1";
+}
 
 function buildBoard(level) {
   const config = levels[level];
@@ -254,16 +267,7 @@ function buildBoard(level) {
 
   board.innerHTML = "";
   board.className = `board level-${level}`;
-  let gridAspect;
-  if (config.pairs === 6) {
-    gridAspect = "4 / 3";
-  } else if (config.pairs === 10) {
-    gridAspect = "5 / 4";
-  } else if (config.pairs === 12) {
-    gridAspect = "6 / 4";
-  } else {
-    gridAspect = "1 / 1";
-  }
+  const gridAspect = getBoardAspectCss(config.pairs);
   board.style.setProperty("--board-aspect", gridAspect);
   board.style.width = "";
   board.style.height = "";
@@ -291,15 +295,7 @@ function buildBoard(level) {
     if (!wrap) return;
     const wrapRect = wrap.getBoundingClientRect();
     const margin = 28;
-    const maxW = wrapRect.width - margin * 2;
-    const maxH = wrapRect.height - margin * 2;
-    const aspect = config.pairs === 6 ? 4 / 3 : config.pairs === 10 ? 5 / 4 : config.pairs === 12 ? 6 / 4 : 1;
-
-    let w = maxW;
-    let h = w / aspect;
-    if (h > maxH) {
-      h = maxH;
-    }
+    const aspect = getBoardAspect(config.pairs);
 
     const computedStyle = window.getComputedStyle(wrap);
     const paddingX = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
@@ -307,8 +303,8 @@ function buildBoard(level) {
     const availableW = wrapRect.width - paddingX;
     const availableH = wrapRect.height - paddingY;
 
-    w = availableW - margin * 2;
-    h = w / aspect;
+    let w = availableW - margin * 2;
+    let h = w / aspect;
     if (h > availableH - margin * 2) {
       h = availableH - margin * 2;
       w = h * aspect;
@@ -502,7 +498,7 @@ window.addEventListener("resize", () => {
     const availableW = wrapRect.width - paddingX;
     const availableH = wrapRect.height - paddingY;
     const margin = 28;
-    const aspect = config.pairs === 6 ? 4 / 3 : config.pairs === 10 ? 5 / 4 : config.pairs === 12 ? 6 / 4 : 1;
+    const aspect = getBoardAspect(config.pairs);
 
     let w = availableW - margin * 2;
     let h = w / aspect;
