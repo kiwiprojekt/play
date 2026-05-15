@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'Szkolny1';
+  src: url('fonts/Szkolny1.otf') format('opentype');
+}
+
 :root {
   --color-1: #a3a380;
   --color-2: #d6ce93;
@@ -312,13 +317,13 @@ body.in-game .menu-back-btn {
 }
 
 .handwritten-target {
-  font-family: 'Playwrite PL', cursive;
+  font-family: 'Szkolny1', cursive;
   font-weight: 400;
   font-size: 160px;
 }
 
 .handwritten-card {
-  font-family: 'Playwrite PL', cursive;
+  font-family: 'Szkolny1', cursive;
   font-size: 48px;
   font-weight: 400;
 }
@@ -332,7 +337,7 @@ body.in-game .menu-back-btn {
 }
 
 .target-mixed-lower {
-  font-family: 'Playwrite PL', cursive;
+  font-family: 'Szkolny1', cursive;
   font-size: 160px;
   font-weight: 400;
   color: var(--color-5);
@@ -347,7 +352,7 @@ body.in-game .menu-back-btn {
 }
 
 .card-mixed-lower {
-  font-family: 'Playwrite PL', cursive;
+  font-family: 'Szkolny1', cursive;
   font-size: 48px;
   font-weight: 400;
 }
