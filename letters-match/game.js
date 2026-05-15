@@ -1,6 +1,9 @@
 const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const ALL_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
+const ALL_PL_LETTERS = 'ABCDEFGHIJKLMNOPRSTUWXYZ'.split('').concat(['Ą','Ć','Ę','Ł','Ń','Ó','Ś','Ź','Ż']);
+const ALL_PL_LOWERCASE = 'abcdefghijklmnoprstuwxyz'.split('').concat(['ą','ć','ę','ł','ń','ó','ś','ź','ż']);
+
 const LETTERS = {
   easy: ['O', 'o', 'U', 'u', 'M', 'm', 'W', 'w', 'V', 'v', 'Y', 'y', 'I', 'l'],
   medium: ['E', 'e', 'A', 'a', 'S', 's', 'G', 'g', 'J', 'j', 'P', 'p'],
@@ -133,8 +136,11 @@ document.getElementById('popupNext').addEventListener('click', () => {
 });
 
 function getAvailableLetters() {
+  const lang = getLanguage();
   if (isInfinite) {
-    return [...ALL_LETTERS, ...ALL_LOWERCASE];
+    return lang === 'pl'
+      ? [...ALL_PL_LETTERS, ...ALL_PL_LOWERCASE]
+      : [...ALL_LETTERS, ...ALL_LOWERCASE];
   }
   if (currentLevel === 'easy') return LETTERS.easy;
   if (currentLevel === 'medium') return [...LETTERS.easy, ...LETTERS.medium].slice(0, 14);
@@ -287,3 +293,27 @@ function resetGame() {
 
 loadProgress();
 generateRound();
+
+(function initLangSelector() {
+  const selector = document.getElementById('langSelector');
+  if (!selector) return;
+
+  function updateButtons(lang) {
+    selector.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+
+  updateButtons(getLanguage());
+
+  selector.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lang-btn');
+    if (!btn) return;
+    const lang = btn.dataset.lang;
+    setLanguage(lang);
+    updateButtons(lang);
+    if (gameScreen && !gameScreen.classList.contains('hidden')) {
+      generateRound();
+    }
+  });
+})();
