@@ -13,6 +13,16 @@ const LETTERS = {
   wild: ['P', 'p', 'Q', 'q', 'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z']
 };
 
+// Polish letter sets: no V or Q; Polish-specific letters introduced progressively
+const LETTERS_PL = {
+  easy:   ['O', 'o', 'U', 'u', 'M', 'm', 'W', 'w', 'X', 'x', 'Y', 'y', 'I', 'l'],
+  medium: ['E', 'e', 'A', 'a', 'S', 's', 'G', 'g', 'J', 'j', 'P', 'p'],
+  hard:   ['C', 'c', 'K', 'k', 'F', 'f', 'R', 'r', 'N', 'n', 'B', 'b', 'D', 'd', 'Ą', 'ą'],
+  fun:    ['A', 'a', 'B', 'b', 'C', 'c', 'Ć', 'ć', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g'],
+  mixed:  ['H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'Ł', 'ł', 'M', 'm', 'N', 'n'],
+  wild:   ['P', 'p', 'R', 'r', 'S', 's', 'Ś', 'ś', 'T', 't', 'U', 'u', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', 'Ź', 'ź', 'Ż', 'ż']
+};
+
 const LEVEL_STYLES = {
   easy: { targetClass: '', cardClass: '' },
   medium: { targetClass: '', cardClass: '' },
@@ -142,10 +152,11 @@ function getAvailableLetters() {
       ? [...ALL_PL_LETTERS, ...ALL_PL_LOWERCASE]
       : [...ALL_LETTERS, ...ALL_LOWERCASE];
   }
-  if (currentLevel === 'easy') return LETTERS.easy;
-  if (currentLevel === 'medium') return [...LETTERS.easy, ...LETTERS.medium].slice(0, 14);
-  if (currentLevel === 'hard') return [...LETTERS.easy, ...LETTERS.medium, ...LETTERS.hard];
-  return LETTERS[currentLevel] || LETTERS.easy;
+  const letters = lang === 'pl' ? LETTERS_PL : LETTERS;
+  if (currentLevel === 'easy') return letters.easy;
+  if (currentLevel === 'medium') return [...letters.easy, ...letters.medium].slice(0, 14);
+  if (currentLevel === 'hard') return [...letters.easy, ...letters.medium, ...letters.hard];
+  return letters[currentLevel] || letters.easy;
 }
 
 function getCardCount() {
