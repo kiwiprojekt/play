@@ -1,2 +1,6 @@
 
-**/.DS_Store
+**/.DS_Storenode_modules/
+
+node_modules/
+
+.DS_Store

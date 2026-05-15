@@ -36,8 +36,6 @@ const LEVEL_STYLES = {
 const LEVEL_ORDER = ['easy', 'medium', 'hard', 'fun', 'mixed', 'wild', 'infinite'];
 const ROUNDS_PER_GAME = 10;
 
-const STORAGE_PREFIX = 'letterMatch_';
-
 let currentLevel = null;
 let score = 0;
 let round = 0;
@@ -45,14 +43,6 @@ let isInfinite = false;
 let isProcessing = false;
 let currentLevelIndex = 0;
 let unlockedLevel = 1;
-
-function getStorage(key) {
-  return localStorage.getItem(STORAGE_PREFIX + key);
-}
-
-function setStorage(key, value) {
-  localStorage.setItem(STORAGE_PREFIX + key, value);
-}
 
 function loadProgress() {
   const saved = getStorage('unlockedLevel');
@@ -328,3 +318,15 @@ generateRound();
     }
   });
 })();
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    LETTERS, LETTERS_PL, LEVEL_ORDER, ROUNDS_PER_GAME,
+    ALL_LETTERS, ALL_LOWERCASE, ALL_PL_LETTERS, ALL_PL_LOWERCASE,
+    getAvailableLetters, getCardCount,
+    _setState(state) {
+      if ('currentLevel' in state) currentLevel = state.currentLevel;
+      if ('isInfinite' in state) isInfinite = state.isInfinite;
+    },
+  };
+}

@@ -511,3 +511,7 @@ window.addEventListener("resize", () => {
     board.style.height = `${Math.max(h, 0)}px`;
   }, 100);
 });
+
+if (typeof module !== 'undefined') {
+  module.exports = { levels, shuffle, getAssetPath, getBoardAspect, getBoardAspectCss };
+}

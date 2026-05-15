@@ -1,0 +1,28 @@
+{
+  "name": "play",
+  "version": "1.0.0",
+  "description": "A few simple browser games for kids.",
+  "main": "sw.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kiwiprojekt/play.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kiwiprojekt/play/issues"
+  },
+  "homepage": "https://github.com/kiwiprojekt/play#readme",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1"
+  }
+}

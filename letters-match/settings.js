@@ -26,3 +26,7 @@ function setLanguage(language) {
   }
   setStorage('language', language);
 }
+
+if (typeof module !== 'undefined') {
+  module.exports = { getLanguage, setLanguage, VALID_LANGUAGES, DEFAULT_LANGUAGE };
+}

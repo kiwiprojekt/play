@@ -78,3 +78,5 @@ class MazeGenerator {
         return { x: this.cols - 1, y: this.rows - 1 };
     }
 }
+
+if (typeof module !== 'undefined') module.exports = MazeGenerator;
