@@ -200,3 +200,74 @@ describe('LEVEL_ORDER / ROUNDS_PER_GAME', () => {
     expect(game.ROUNDS_PER_GAME).toBe(10);
   });
 });
+
+// ─── no-repeat letters per level ─────────────────────────────────────────
+
+describe('generateRound() — no-repeat letters per level', () => {
+  beforeEach(() => {
+    mockGetLanguage.mockReturnValue('en');
+    // Reset used-letter tracking before each test
+    game._setState({ usedBaseLetters: [], lastTargetBase: null });
+  });
+
+  function getTargetBase() {
+    return document.getElementById('target').textContent.toUpperCase();
+  }
+
+  it('hard EN — 21 consecutive rounds have no consecutive duplicate base letter', () => {
+    game._setState({ currentLevel: 'hard', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    let prev = null;
+    for (let i = 0; i < 21; i++) {
+      game.generateRound();
+      const base = getTargetBase();
+      expect(base).not.toBe(prev);
+      prev = base;
+    }
+  });
+
+  it('hard EN — within first 21 unique-base-letter rounds, no base repeats until cycle restarts', () => {
+    // hard pool has 21 unique base letters (easy 7 + medium 6 + hard 8 = 21)
+    game._setState({ currentLevel: 'hard', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    const seen = new Set();
+    for (let i = 0; i < 21; i++) {
+      game.generateRound();
+      const base = getTargetBase();
+      expect(seen.has(base)).toBe(false);
+      seen.add(base);
+    }
+    // On the 22nd round the cycle restarts — it must differ from round 21's base
+    const lastBase = getTargetBase();
+    game.generateRound();
+    expect(getTargetBase()).not.toBe(lastBase);
+  });
+
+  it('fun EN — 10 rounds never repeat consecutive base letters', () => {
+    // fun pool has only 8 unique base letters, so repeats are necessary after round 8
+    game._setState({ currentLevel: 'fun', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    let prev = null;
+    for (let i = 0; i < 10; i++) {
+      game.generateRound();
+      const base = getTargetBase();
+      expect(base).not.toBe(prev);
+      prev = base;
+    }
+  });
+
+  it('_setState resets usedBaseLetters and lastTargetBase correctly', () => {
+    game._setState({ currentLevel: 'easy', isInfinite: false, usedBaseLetters: ['A', 'B'], lastTargetBase: 'B' });
+    const state = game._getState();
+    expect(state.usedBaseLetters.has('A')).toBe(true);
+    expect(state.usedBaseLetters.has('B')).toBe(true);
+    expect(state.lastTargetBase).toBe('B');
+  });
+
+  it('usedBaseLetters grows after each generateRound call', () => {
+    game._setState({ currentLevel: 'hard', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    game.generateRound();
+    expect(game._getState().usedBaseLetters.size).toBe(1);
+    game.generateRound();
+    expect(game._getState().usedBaseLetters.size).toBe(2);
+    game.generateRound();
+    expect(game._getState().usedBaseLetters.size).toBe(3);
+  });
+});
