@@ -43,6 +43,8 @@ let isInfinite = false;
 let isProcessing = false;
 let currentLevelIndex = 0;
 let unlockedLevel = 1;
+let usedBaseLetters = new Set();
+let lastTargetBase = null;
 
 function loadProgress() {
   const saved = getStorage('unlockedLevel');
@@ -161,8 +163,26 @@ function getCardCount() {
 
 function generateRound() {
   const letters = getAvailableLetters();
-  const targetIndex = Math.floor(Math.random() * letters.length);
-  let targetLetter = letters[targetIndex];
+
+  // Prefer letters whose base hasn't been used in this level yet.
+  let pool = letters.filter(l => !usedBaseLetters.has(l.toUpperCase()));
+
+  // If all base letters exhausted, start a fresh cycle — but never repeat
+  // the last base consecutively.
+  if (pool.length === 0) {
+    usedBaseLetters.clear();
+    pool = lastTargetBase
+      ? letters.filter(l => l.toUpperCase() !== lastTargetBase)
+      : [...letters];
+    // Fallback: if the pool somehow ends up empty (single-letter set), use all.
+    if (pool.length === 0) pool = [...letters];
+  }
+
+  const targetIndex = Math.floor(Math.random() * pool.length);
+  let targetLetter = pool[targetIndex];
+
+  lastTargetBase = targetLetter.toUpperCase();
+  usedBaseLetters.add(lastTargetBase);
   const targetIsUpper = targetLetter === targetLetter.toUpperCase();
   
   const answer = targetIsUpper ? targetLetter.toLowerCase() : targetLetter.toUpperCase();
@@ -286,6 +306,8 @@ function showLevelComplete() {
 function resetGame() {
   score = 0;
   round = 0;
+  usedBaseLetters = new Set();
+  lastTargetBase = null;
   scoreEl.textContent = '0';
   progressEl.style.width = '0%';
   popup.classList.remove('show');
@@ -323,10 +345,15 @@ if (typeof module !== 'undefined') {
   module.exports = {
     LETTERS, LETTERS_PL, LEVEL_ORDER, ROUNDS_PER_GAME,
     ALL_LETTERS, ALL_LOWERCASE, ALL_PL_LETTERS, ALL_PL_LOWERCASE,
-    getAvailableLetters, getCardCount,
+    getAvailableLetters, getCardCount, generateRound,
     _setState(state) {
       if ('currentLevel' in state) currentLevel = state.currentLevel;
       if ('isInfinite' in state) isInfinite = state.isInfinite;
+      if ('usedBaseLetters' in state) usedBaseLetters = new Set(state.usedBaseLetters);
+      if ('lastTargetBase' in state) lastTargetBase = state.lastTargetBase;
+    },
+    _getState() {
+      return { usedBaseLetters: new Set(usedBaseLetters), lastTargetBase };
     },
   };
 }
