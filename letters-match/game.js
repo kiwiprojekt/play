@@ -1,3 +1,14 @@
+// Dynamic UI scale: 1.0 at 1280px wide → 1.5 at 1920px wide (1080p +50%)
+(function initScale() {
+  function updateScale() {
+    const w = window.innerWidth;
+    const scale = Math.min(1.5, Math.max(1.0, 1.0 + (w - 1280) / 640 * 0.5));
+    document.documentElement.style.setProperty('--scale', scale.toFixed(4));
+  }
+  updateScale();
+  window.addEventListener('resize', updateScale);
+})();
+
 const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const ALL_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
@@ -274,18 +285,84 @@ function handleCardClick(card, clickedLetter, correctAnswer) {
 
 function createConfetti(card) {
   const rect = card.getBoundingClientRect();
-  const colors = ['#a3a380', '#d6ce93', '#efebce', '#d8a48f', '#bb8588'];
-  
-  for (let i = 0; i < 15; i++) {
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const colors = ['#a3a380', '#d6ce93', '#f7c59f', '#d8a48f', '#bb8588', '#f4e1d2', '#ffd6a5', '#caffbf'];
+  const shapes = ['square', 'circle', 'ribbon'];
+
+  // --- Physics confetti ---
+  for (let i = 0; i < 28; i++) {
     const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 100) + 'px';
-    piece.style.top = (rect.top + rect.height / 2) + 'px';
-    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    piece.className = 'confetti-piece confetti-' + shape;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.background = color;
+    piece.style.left = cx + 'px';
+    piece.style.top = cy + 'px';
+
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 120 + Math.random() * 220;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed - 180; // bias upward
+    const gravity = 420 + Math.random() * 120;
+    const rotSpeed = (Math.random() - 0.5) * 900;
+    const duration = 0.7 + Math.random() * 0.5;
+    const size = 8 + Math.random() * 10;
+
+    piece.style.width = size + 'px';
+    piece.style.height = shape === 'ribbon' ? (size * 0.35) + 'px' : size + 'px';
+    piece.style.setProperty('--vx', vx + 'px');
+    piece.style.setProperty('--vy', vy + 'px');
+    piece.style.setProperty('--gravity', gravity + 'px');
+    piece.style.setProperty('--rot', rotSpeed + 'deg');
+    piece.style.setProperty('--dur', duration + 's');
+
     document.body.appendChild(piece);
-    
-    setTimeout(() => piece.remove(), 1000);
+    setTimeout(() => piece.remove(), duration * 1000 + 100);
   }
+
+  // --- Floating emoji burst ---
+  const emojiSets = [
+    ['⭐', '🌟', '✨', '💫'],
+    ['❤️', '💛', '💚', '💙'],
+    ['🎉', '🎊', '🎈', '🎀'],
+  ];
+  const emojis = emojiSets[Math.floor(Math.random() * emojiSets.length)];
+  for (let i = 0; i < 5; i++) {
+    const em = document.createElement('div');
+    em.className = 'win-emoji';
+    em.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const spread = 120;
+    em.style.left = (cx + (Math.random() - 0.5) * spread) + 'px';
+    em.style.top = (cy + (Math.random() - 0.5) * spread * 0.5) + 'px';
+    em.style.setProperty('--rise', -(60 + Math.random() * 80) + 'px');
+    em.style.setProperty('--sway', (Math.random() - 0.5) * 60 + 'px');
+    em.style.setProperty('--delay', (i * 0.07) + 's');
+    document.body.appendChild(em);
+    setTimeout(() => em.remove(), 1200);
+  }
+
+  // --- Ripple ring on the target letter ---
+  flashTarget();
+
+  // --- Score counter pop ---
+  scoreEl.classList.remove('score-pop');
+  void scoreEl.offsetWidth; // reflow
+  scoreEl.classList.add('score-pop');
+  setTimeout(() => scoreEl.classList.remove('score-pop'), 500);
+}
+
+function flashTarget() {
+  const ring = document.createElement('div');
+  ring.className = 'target-ring';
+  const rect = targetEl.getBoundingClientRect();
+  ring.style.left = (rect.left + rect.width / 2) + 'px';
+  ring.style.top  = (rect.top  + rect.height / 2) + 'px';
+  document.body.appendChild(ring);
+  setTimeout(() => ring.remove(), 700);
+
+  targetEl.classList.add('target-flash');
+  setTimeout(() => targetEl.classList.remove('target-flash'), 500);
 }
 
 function updateProgress() {
