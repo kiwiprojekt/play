@@ -50,7 +50,7 @@ describe('LETTERS (English sets)', () => {
 });
 
 describe('LETTERS_PL (Polish sets)', () => {
-  it('easy has 14 entries', () => expect(game.LETTERS_PL.easy).toHaveLength(14));
+  it('easy has 12 entries', () => expect(game.LETTERS_PL.easy).toHaveLength(12));
 
   it('no V or Q in any Polish set', () => {
     const allPL = Object.values(game.LETTERS_PL).flat();

@@ -1,0 +1,9 @@
+# KiwiPlay - Web Games for Kids
+
+This is a collection of simple, interactive web games designed for children, such as "Letter Match", "Space Maze", and "Memo". 
+
+## AI Agent Instructions
+- **ALWAYS run tests** before completing your task. Use `npm test` from the project root (`/Users/michal/Repos/play`).
+- Ensure no tests are broken by your changes.
+- UI elements should be child-friendly, engaging, and responsive.
+- Maintain existing codebase patterns.
