@@ -27,6 +27,14 @@ function setLanguage(language) {
   setStorage('language', language);
 }
 
+function getMute() {
+  return getStorage('mute') === 'true';
+}
+
+function setMute(isMuted) {
+  setStorage('mute', isMuted ? 'true' : 'false');
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { getLanguage, setLanguage, VALID_LANGUAGES, DEFAULT_LANGUAGE };
+  module.exports = { getLanguage, setLanguage, VALID_LANGUAGES, DEFAULT_LANGUAGE, getMute, setMute };
 }

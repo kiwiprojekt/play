@@ -246,6 +246,9 @@ function generateRound() {
   targetEl.className = targetClass;
   targetEl.textContent = targetLetter;
   cardsEl.innerHTML = '';
+
+  // Speak the target letter after a short delay (card render settles first)
+  setTimeout(() => speakLetter(targetLetter), 150);
   
   allCards.forEach((letter) => {
     const card = document.createElement('div');
@@ -281,6 +284,45 @@ function handleCardClick(card, clickedLetter, correctAnswer) {
     card.classList.add('wrong');
     setTimeout(() => card.classList.remove('wrong'), 400);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Voiceover — Web Speech API
+// ---------------------------------------------------------------------------
+let _cachedVoices = [];
+if (window.speechSynthesis) {
+  // Voices may not be ready immediately; cache them when available
+  const loadVoices = () => { _cachedVoices = window.speechSynthesis.getVoices(); };
+  loadVoices();
+  window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+}
+
+function pickEnFemaleVoice() {
+  // Preferred female voice names across macOS/iOS/Chrome/Edge
+  const femaleKeywords = ['samantha', 'karen', 'victoria', 'moira', 'tessa',
+                          'fiona', 'veena', 'zira', 'female', 'woman'];
+  const enVoices = _cachedVoices.filter(v => v.lang.startsWith('en'));
+  return enVoices.find(v => femaleKeywords.some(k => v.name.toLowerCase().includes(k)))
+      ?? enVoices.find(v => v.lang === 'en-US')
+      ?? enVoices[0]
+      ?? null;
+}
+
+function speakLetter(letter) {
+  if (!window.speechSynthesis || getMute()) return;
+  window.speechSynthesis.cancel();
+  // Always use lowercase so TTS doesn't say "capital W" (EN) or "duże W" (PL)
+  const utterance = new SpeechSynthesisUtterance(letter.toLowerCase());
+  const isPL = getLanguage() === 'pl';
+  utterance.lang   = isPL ? 'pl-PL' : 'en-US';
+  utterance.rate   = isPL ? 0.8 : 1.0;
+  utterance.pitch  = 1.0;
+  utterance.volume = 1;
+  if (!isPL) {
+    const femaleVoice = pickEnFemaleVoice();
+    if (femaleVoice) utterance.voice = femaleVoice;
+  }
+  window.speechSynthesis.speak(utterance);
 }
 
 function createConfetti(card) {
@@ -389,6 +431,37 @@ function resetGame() {
   progressEl.style.width = '0%';
   popup.classList.remove('show');
   generateRound();
+}
+
+// Tap the big target letter to replay its pronunciation
+targetEl.addEventListener('click', () => {
+  const letter = targetEl.textContent;
+  if (letter) speakLetter(letter);
+});
+
+// Mute button handling
+const muteBtn = document.getElementById('muteBtn');
+if (muteBtn) {
+  const updateMuteUI = () => {
+    const isMuted = getMute();
+    muteBtn.textContent = isMuted ? '🔇' : '🔊';
+    if (isMuted) {
+      muteBtn.classList.add('muted');
+    } else {
+      muteBtn.classList.remove('muted');
+    }
+  };
+  
+  updateMuteUI();
+  
+  muteBtn.addEventListener('click', () => {
+    const isMuted = !getMute();
+    setMute(isMuted);
+    updateMuteUI();
+    if (!isMuted && targetEl.textContent) {
+      speakLetter(targetEl.textContent);
+    }
+  });
 }
 
 loadProgress();

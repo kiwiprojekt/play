@@ -247,6 +247,33 @@ body.in-game .menu-back-btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.controls-bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-top: calc(8px * var(--scale));
+}
+
+.mute-btn {
+  background: transparent;
+  border: none;
+  font-size: calc(24px * var(--scale));
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  padding: calc(4px * var(--scale));
+}
+
+.mute-btn:hover {
+  opacity: 1;
+}
+
+.mute-btn.muted {
+  opacity: 0.4;
 }
 
 @keyframes pulse {
