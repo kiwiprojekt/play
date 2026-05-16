@@ -20,6 +20,16 @@
   --color-3: #efebce;
   --color-4: #d8a48f;
   --color-5: #bb8588;
+
+  /*
+   * Dynamic gameplay scale:
+   * 1.0 at 1280px wide  →  1.5 at 1920px wide (1080p = +50%)
+   * Formula: clamp(1, (100vw - 1280px) / (1920px - 1280px) * 0.5 + 1, 1.5)
+   * Simplified to a unitless calc using vw:
+   */
+  --scale: clamp(1, 0.21875 + 0.078125 * (100vw / 1px / 10), 1.5);
+  /* simpler readable form: */
+  --scale: clamp(1.0, calc((100vw - 1280px) / 640 * 0.5 + 1.0), 1.5);
 }
 
 body {
@@ -152,7 +162,7 @@ body.in-game .menu-back-btn {
   top: 0;
   left: 0;
   background: var(--color-3);
-  padding: 16px;
+  padding: calc(16px * var(--scale));
   z-index: 50;
 }
 
@@ -163,7 +173,7 @@ body.in-game .menu-back-btn {
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-top: 100px;
+  margin-top: calc(100px * var(--scale));
 }
 
 .header {
@@ -175,13 +185,13 @@ body.in-game .menu-back-btn {
 }
 
 .back-btn {
-  padding: 12px 24px;
+  padding: calc(12px * var(--scale)) calc(24px * var(--scale));
   background: var(--color-4);
   border: none;
-  border-radius: 24px;
+  border-radius: calc(24px * var(--scale));
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
-  font-size: 18px;
+  font-size: calc(18px * var(--scale));
   color: white;
   cursor: pointer;
   transition: all 0.2s;
@@ -192,25 +202,25 @@ body.in-game .menu-back-btn {
 }
 
 .score-display {
-  font-size: 28px;
+  font-size: calc(28px * var(--scale));
   font-weight: 900;
   color: var(--color-5);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: calc(8px * var(--scale));
 }
 
 .score-label {
-  font-size: 16px;
+  font-size: calc(16px * var(--scale));
   color: var(--color-1);
 }
 
 .progress {
   width: 100%;
   margin: 0 auto 0 auto;
-  height: 16px;
+  height: calc(16px * var(--scale));
   background: var(--color-2);
-  border-radius: 8px;
+  border-radius: calc(8px * var(--scale));
   overflow: hidden;
 }
 
@@ -222,7 +232,7 @@ body.in-game .menu-back-btn {
 }
 
 .game-area {
-  margin-top: 20px;
+  margin-top: calc(20px * var(--scale));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -231,15 +241,15 @@ body.in-game .menu-back-btn {
 
 .target-letter {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 180px;
+  font-size: calc(180px * var(--scale));
   font-weight: 900;
   color: var(--color-5);
   text-shadow: 4px 4px 0 var(--color-2), 8px 8px 0 rgba(0,0,0,0.1);
   animation: pulse 2s ease-in-out infinite;
-  margin-bottom: 40px;
+  margin-bottom: calc(40px * var(--scale));
   user-select: none;
-  width: 250px;
-  height: 220px;
+  width: calc(250px * var(--scale));
+  height: calc(220px * var(--scale));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,50 +261,50 @@ body.in-game .menu-back-btn {
 }
 
 .instruction {
-  font-size: 26px;
+  font-size: calc(26px * var(--scale));
   color: var(--color-1);
-  margin-bottom: 24px;
+  margin-bottom: calc(24px * var(--scale));
   font-weight: 700;
 }
 
 .cards-container {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: calc(20px * var(--scale));
   width: 100%;
   flex-wrap: nowrap;
-  padding: 0 16px;
+  padding: 0 calc(16px * var(--scale));
 }
 
 .answer-card {
   font-family: 'Cormorant Garamond', serif;
-  min-width: 120px;
-  width: 120px;
-  height: 140px;
+  min-width: calc(120px * var(--scale));
+  width: calc(120px * var(--scale));
+  height: calc(140px * var(--scale));
   padding: 0;
   background: white;
-  border: 4px solid var(--color-4);
-  border-radius: 20px;
+  border: calc(4px * var(--scale)) solid var(--color-4);
+  border-radius: calc(20px * var(--scale));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 70px;
+  font-size: calc(70px * var(--scale));
   font-weight: 700;
   color: var(--color-1);
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 0 var(--color-5);
+  box-shadow: 0 calc(4px * var(--scale)) 0 var(--color-5);
   user-select: none;
 }
 
 .answer-card:hover {
-  transform: scale(1.1) translateY(-4px);
-  box-shadow: 0 8px 0 var(--color-5);
+  transform: scale(1.1) translateY(calc(-4px * var(--scale)));
+  box-shadow: 0 calc(8px * var(--scale)) 0 var(--color-5);
 }
 
 .answer-card:active {
   transform: scale(0.95);
-  box-shadow: 0 2px 0 var(--color-5);
+  box-shadow: 0 calc(2px * var(--scale)) 0 var(--color-5);
 }
 
 .answer-card.correct {
@@ -324,18 +334,18 @@ body.in-game .menu-back-btn {
 .handwritten-target {
   font-family: 'SzkolnyBold', cursive;
   font-weight: 400;
-  font-size: 160px;
+  font-size: calc(160px * var(--scale));
 }
 
 .handwritten-card {
   font-family: 'SzkolnyBold', cursive;
-  font-size: 64px;
+  font-size: calc(64px * var(--scale));
   font-weight: 400;
 }
 
 .target-mixed-upper {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 180px;
+  font-size: calc(180px * var(--scale));
   font-weight: 900;
   color: var(--color-5);
   text-shadow: 4px 4px 0 var(--color-2), 8px 8px 0 rgba(0,0,0,0.1);
@@ -343,7 +353,7 @@ body.in-game .menu-back-btn {
 
 .target-mixed-lower {
   font-family: 'SzkolnyBold', cursive;
-  font-size: 160px;
+  font-size: calc(160px * var(--scale));
   font-weight: 400;
   color: var(--color-5);
   text-shadow: 4px 4px 0 var(--color-2), 8px 8px 0 rgba(0,0,0,0.1);
@@ -351,14 +361,14 @@ body.in-game .menu-back-btn {
 
 .card-mixed-upper {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 70px;
+  font-size: calc(70px * var(--scale));
   font-weight: 700;
   color: var(--color-1);
 }
 
 .card-mixed-lower {
   font-family: 'SzkolnyBold', cursive;
-  font-size: 64px;
+  font-size: calc(64px * var(--scale));
   font-weight: 400;
 }
 
