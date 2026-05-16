@@ -12,8 +12,8 @@
 const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const ALL_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-const ALL_PL_LETTERS = 'ABCDEFGHIJKLMNOPRSTUWXYZ'.split('').concat(['Ą','Ć','Ę','Ł','Ń','Ó','Ś','Ź','Ż']);
-const ALL_PL_LOWERCASE = 'abcdefghijklmnoprstuwxyz'.split('').concat(['ą','ć','ę','ł','ń','ó','ś','ź','ż']);
+const ALL_PL_LETTERS = 'ABCDEFGHIJKLMNOPRSTUWYZ'.split('').concat(['Ą','Ć','Ę','Ł','Ń','Ó','Ś','Ź','Ż']);
+const ALL_PL_LOWERCASE = 'abcdefghijklmnoprstuwyz'.split('').concat(['ą','ć','ę','ł','ń','ó','ś','ź','ż']);
 
 const LETTERS = {
   easy: ['O', 'o', 'U', 'u', 'M', 'm', 'W', 'w', 'V', 'v', 'Y', 'y', 'I', 'l'],
@@ -26,12 +26,12 @@ const LETTERS = {
 
 // Polish letter sets: no V or Q; Polish-specific letters introduced progressively
 const LETTERS_PL = {
-  easy:   ['O', 'o', 'U', 'u', 'M', 'm', 'W', 'w', 'X', 'x', 'Y', 'y', 'I', 'l'],
+  easy:   ['O', 'o', 'U', 'u', 'M', 'm', 'W', 'w', 'Y', 'y', 'I', 'l'],
   medium: ['E', 'e', 'A', 'a', 'S', 's', 'G', 'g', 'J', 'j', 'P', 'p'],
   hard:   ['C', 'c', 'K', 'k', 'F', 'f', 'R', 'r', 'N', 'n', 'B', 'b', 'D', 'd', 'Ą', 'ą'],
   fun:    ['A', 'a', 'B', 'b', 'C', 'c', 'Ć', 'ć', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g'],
   mixed:  ['H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'Ł', 'ł', 'M', 'm', 'N', 'n'],
-  wild:   ['P', 'p', 'R', 'r', 'S', 's', 'Ś', 'ś', 'T', 't', 'U', 'u', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', 'Ź', 'ź', 'Ż', 'ż']
+  wild:   ['P', 'p', 'R', 'r', 'S', 's', 'Ś', 'ś', 'T', 't', 'U', 'u', 'W', 'w', 'Y', 'y', 'Z', 'z', 'Ź', 'ź', 'Ż', 'ż']
 };
 
 const LEVEL_STYLES = {
