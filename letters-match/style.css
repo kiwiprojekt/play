@@ -14,6 +14,50 @@
   src: url('fonts/SzkolnyBold.otf') format('opentype');
 }
 
+@font-face {
+  font-family: 'Amatic SC';
+  src: url('fonts/amaticsc-700-latin-ext.woff2') format('woff2'),
+       url('fonts/amaticsc-700-latin.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/cormorant-700-latin-ext.woff2') format('woff2'),
+       url('fonts/cormorant-700-latin.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/cormorant-700-latin-ext.woff2') format('woff2'),
+       url('fonts/cormorant-700-latin.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Playwrite PL';
+  src: url('fonts/playwritepl-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('fonts/quicksand-variable-latin-ext.woff2') format('woff2'),
+       url('fonts/quicksand-variable-latin.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --color-1: #a3a380;
   --color-2: #d6ce93;
@@ -604,4 +648,16 @@ body.in-game .lang-selector {
 .lang-btn:hover:not(.active) {
   background: var(--color-3);
   transform: scale(1.05);
+}
+
+.game-footer {
+  margin-top: 24px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  opacity: 0.8;
+  z-index: 10;
+}
+
+body.in-game .game-footer {
+  display: none !important;
 }

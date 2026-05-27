@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - KiwiPlay</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .privacy-container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--white);
+            border: 4px solid var(--green-dark);
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 0 var(--green-dark);
+            margin: 2rem auto;
+            padding: 2.5rem;
+            box-sizing: border-box;
+        }
+
+        .back-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--green-dark);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background-color 0.2s;
+            margin-bottom: 2rem;
+        }
+
+        .back-home-btn:hover {
+            background: var(--green-light);
+            transform: scale(1.05);
+        }
+
+        h1 {
+            color: var(--green-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 {
+            color: var(--green-dark);
+            font-size: 1.6rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px dashed var(--green-light);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            color: #333;
+        }
+
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.75rem;
+        }
+
+        li {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+            color: #333;
+        }
+
+        .highlight-box {
+            background: #f0f7f1;
+            border-left: 5px solid var(--green-light);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .badge {
+            background: var(--yellow);
+            color: var(--black);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <main class="main" style="justify-content: flex-start;">
+        <div class="privacy-container">
+            <a href="/" class="back-home-btn">← Back to KiwiPlay</a>
+            
+            <h1>🥝 KiwiPlay Privacy Policy</h1>
+            <p><strong>Effective Date: May 27, 2026</strong></p>
+            
+            <p>Welcome to KiwiPlay! We make simple, engaging, and fun web games for kids, including "Letter Match", "Space Maze", and "Memo". We care deeply about the privacy of our young players and their families. This Privacy Policy explains exactly how we treat your information.</p>
+
+            <div class="highlight-box">
+                <p><strong>⚡ TL;DR (Too Long; Didn't Read) for Kids & Parents:</strong></p>
+                <ul>
+                    <li>We do <strong>not</strong> collect, track, or share any personal information.</li>
+                    <li>We do <strong>not</strong> show any ads or use tracking cookies.</li>
+                    <li>Everything you do is kept 100% locally on your own computer or tablet.</li>
+                    <li>We self-host all our files, fonts, and scripts so no third party can track you.</li>
+                </ul>
+            </div>
+
+            <h2>🔒 Parent's Corner & Children's Privacy</h2>
+            <p>KiwiPlay is designed to be a safe haven for children. We fully comply with the <strong>Children's Online Privacy Protection Act (COPPA)</strong> in the United States and the <strong>GDPR-K</strong> provisions in the European Union:</p>
+            <ul>
+                <li>We do not request, process, or collect children's names, emails, addresses, or online identifiers.</li>
+                <li>No account creation is required to play any game.</li>
+                <li>No dynamic user tracking or behavioral profiling is permitted on our site.</li>
+            </ul>
+
+            <h2>💾 How We Use LocalStorage (ePrivacy Compliance)</h2>
+            <p>To make the games work smoothly and remember your preferences, we use a web browser feature called <strong>LocalStorage</strong>. This saves small text details directly on your device. It is never sent to our servers or shared with anyone else.</p>
+            <p>Under the EU ePrivacy Directive, these storage items are <strong>strictly necessary</strong> for functional gameplay customization and do not require tracking consent. Here is exactly what we store:</p>
+            <ul>
+                <li><span class="badge">letterMatch_unlockedLevel</span> & <span class="badge">memoUnlockedLevels</span> & <span class="badge">spaceMazeUnlocked</span>: Remembers which levels you have unlocked so you can continue your adventure.</li>
+                <li><span class="badge">letterMatch_language</span>: Remembers whether you prefer playing in English or Polish.</li>
+                <li><span class="badge">letterMatch_mute</span> & <span class="badge">soundMuted</span>: Remembers your sound options (on or off) so the game doesn't start too loudly.</li>
+            </ul>
+
+            <h2>🌐 No Third-Party Tracking</h2>
+            <p>Unlike many websites, KiwiPlay operates without leaks:</p>
+            <ul>
+                <li><strong>No Google Analytics or Facebook Pixels</strong>: We do not track who you are or what pages you click.</li>
+                <li><strong>Self-Hosted Fonts</strong>: All beautiful fonts are hosted on our own server to prevent external networks from registering children's IP addresses.</li>
+                <li><strong>Self-Hosted Game Engines</strong>: The Phaser framework for Space Maze is loaded locally.</li>
+            </ul>
+
+            <h2>⚖️ Your Legal Rights (GDPR)</h2>
+            <p>Since we do not collect any personal data, we do not have any database of your information. You do not need to request deletion or access, as nothing ever leaves your browser! If you want to reset your game history or settings, you can simply clear your browser's history and site data (specifically LocalStorage) at any time.</p>
+
+            <h2>📧 Contact Us</h2>
+            <p>If you have any questions or concerns about KiwiPlay or this policy, please feel free to reach out to the project creators at <strong>kiwiprojekt</strong>.</p>
+            
+            <p class="footer-note">Made with 🥝 for a safer, happier web for kids.</p>
+        </div>
+    </main>
+</body>
+</html>
