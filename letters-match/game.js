@@ -1,5 +1,6 @@
 // Dynamic UI scale: 1.0 at 1280px wide → 1.5 at 1920px wide (1080p +50%)
 (function initScale() {
+  if (typeof window === 'undefined') return;
   function updateScale() {
     const w = window.innerWidth;
     const scale = Math.min(1.5, Math.max(1.0, 1.0 + (w - 1280) / 640 * 0.5));
@@ -8,6 +9,25 @@
   updateScale();
   window.addEventListener('resize', updateScale);
 })();
+
+// Settings resolution (global or imported)
+let _settingsModule;
+if (typeof require !== 'undefined') {
+  try {
+    _settingsModule = require('./settings.js');
+  } catch (_) {}
+}
+
+const _getStorage = (k) => (typeof getStorage === 'function' ? getStorage(k) : (_settingsModule ? _settingsModule.getStorage(k) : null));
+const _setStorage = (k, v) => (typeof setStorage === 'function' ? setStorage(k, v) : (_settingsModule ? _settingsModule.setStorage(k, v) : null));
+const _getLanguage = () => (typeof getLanguage === 'function' ? getLanguage() : (_settingsModule ? _settingsModule.getLanguage() : 'en'));
+const _setLanguage = (l) => (typeof setLanguage === 'function' ? setLanguage(l) : (_settingsModule ? _settingsModule.setLanguage(l) : null));
+const _getMute = () => (typeof getMute === 'function' ? getMute() : (_settingsModule ? _settingsModule.getMute() : false));
+const _setMute = (v) => (typeof setMute === 'function' ? setMute(v) : (_settingsModule ? _settingsModule.setMute(v) : null));
+const _getFontMode = () => (typeof getFontMode === 'function' ? getFontMode() : (_settingsModule ? _settingsModule.getFontMode() : 'default'));
+const _setFontMode = (m) => (typeof setFontMode === 'function' ? setFontMode(m) : (_settingsModule ? _settingsModule.setFontMode(m) : null));
+const _getDisableHandwritten = () => (typeof getDisableHandwritten === 'function' ? getDisableHandwritten() : (_settingsModule ? _settingsModule.getDisableHandwritten() : false));
+const _setDisableHandwritten = (d) => (typeof setDisableHandwritten === 'function' ? setDisableHandwritten(d) : (_settingsModule ? _settingsModule.setDisableHandwritten(d) : null));
 
 const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const ALL_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -57,8 +77,31 @@ let unlockedLevel = 1;
 let usedBaseLetters = new Set();
 let lastTargetBase = null;
 
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/**
+ * Determines whether a given letter should render in handwritten cursive font.
+ * - 'serif': Handwritten disabled across all levels (standard serif only).
+ * - 'hand': Handwritten cursive across all levels.
+ * - 'default': Level progression (1-3 serif, 4-5 hand, 6-7 mixed).
+ */
+function isHandwritten(isUpper, level = currentLevel, infinite = isInfinite, mode = _getFontMode()) {
+  if (mode === 'serif') return false;
+  if (mode === 'hand') return true;
+  if (level === 'fun' || level === 'mixed') return true;
+  if (level === 'wild' || infinite) return !isUpper;
+  return false;
+}
+
 function loadProgress() {
-  const saved = getStorage('unlockedLevel');
+  const saved = _getStorage('unlockedLevel');
   if (saved) {
     unlockedLevel = parseInt(saved, 10);
   }
@@ -66,16 +109,18 @@ function loadProgress() {
 }
 
 function saveProgress() {
-  setStorage('unlockedLevel', unlockedLevel);
+  _setStorage('unlockedLevel', unlockedLevel);
 }
 
 function updateLevelLocks() {
-  document.querySelectorAll('.level-card').forEach((card, index) => {
+  document.querySelectorAll('.level-card').forEach((card) => {
     const levelNum = card.dataset.level === 'infinite' ? 7 : LEVEL_ORDER.indexOf(card.dataset.level) + 1;
     if (levelNum > unlockedLevel) {
       card.classList.add('locked');
+      card.setAttribute('aria-disabled', 'true');
     } else {
       card.classList.remove('locked');
+      card.removeAttribute('aria-disabled');
     }
   });
 }
@@ -106,50 +151,66 @@ document.querySelectorAll('.level-card').forEach(card => {
     isInfinite = currentLevel === 'infinite';
     currentLevelIndex = LEVEL_ORDER.indexOf(currentLevel);
     
-    if (isInfinite) {
-      gameScreen.classList.add('infinite-mode');
-    } else {
-      gameScreen.classList.remove('infinite-mode');
+    if (gameScreen) {
+      if (isInfinite) {
+        gameScreen.classList.add('infinite-mode');
+      } else {
+        gameScreen.classList.remove('infinite-mode');
+      }
     }
     
-    mainMenu.classList.add('hidden');
-    gameScreen.classList.remove('hidden');
+    if (mainMenu) mainMenu.classList.add('hidden');
+    if (gameScreen) gameScreen.classList.remove('hidden');
     document.body.classList.add('in-game');
     resetGame();
   });
 });
 
-document.getElementById('backBtn').addEventListener('click', () => {
-  gameScreen.classList.add('hidden');
-  mainMenu.classList.remove('hidden');
-  document.body.classList.remove('in-game');
-});
+const backBtn = document.getElementById('backBtn');
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
+    clearConfetti();
+    if (gameScreen) gameScreen.classList.add('hidden');
+    if (mainMenu) mainMenu.classList.remove('hidden');
+    document.body.classList.remove('in-game');
+  });
+}
 
-document.getElementById('popupBack').addEventListener('click', () => {
-  popup.classList.remove('show');
-  gameScreen.classList.add('hidden');
-  mainMenu.classList.remove('hidden');
-  document.body.classList.remove('in-game');
-});
+const popupBack = document.getElementById('popupBack');
+if (popupBack) {
+  popupBack.addEventListener('click', () => {
+    clearConfetti();
+    if (popup) popup.classList.remove('show');
+    if (gameScreen) gameScreen.classList.add('hidden');
+    if (mainMenu) mainMenu.classList.remove('hidden');
+    document.body.classList.remove('in-game');
+  });
+}
 
-document.getElementById('popupNext').addEventListener('click', () => {
-  popup.classList.remove('show');
-  if (currentLevelIndex < LEVEL_ORDER.length - 1) {
-    currentLevel = LEVEL_ORDER[currentLevelIndex + 1];
-    currentLevelIndex = LEVEL_ORDER.indexOf(currentLevel);
-    isInfinite = currentLevel === 'infinite';
-    
-    if (isInfinite) {
-      gameScreen.classList.add('infinite-mode');
-    } else {
-      gameScreen.classList.remove('infinite-mode');
+const popupNext = document.getElementById('popupNext');
+if (popupNext) {
+  popupNext.addEventListener('click', () => {
+    clearConfetti();
+    if (popup) popup.classList.remove('show');
+    if (currentLevelIndex < LEVEL_ORDER.length - 1) {
+      currentLevel = LEVEL_ORDER[currentLevelIndex + 1];
+      currentLevelIndex = LEVEL_ORDER.indexOf(currentLevel);
+      isInfinite = currentLevel === 'infinite';
+      
+      if (gameScreen) {
+        if (isInfinite) {
+          gameScreen.classList.add('infinite-mode');
+        } else {
+          gameScreen.classList.remove('infinite-mode');
+        }
+      }
     }
-  }
-  resetGame();
-});
+    resetGame();
+  });
+}
 
 function getAvailableLetters() {
-  const lang = getLanguage();
+  const lang = _getLanguage();
   if (isInfinite) {
     return lang === 'pl'
       ? [...ALL_PL_LETTERS, ...ALL_PL_LOWERCASE]
@@ -172,91 +233,74 @@ function getCardCount() {
   return 6;
 }
 
+function applyFontClasses() {
+  if (!targetEl || !cardsEl) return;
+  const targetLetter = targetEl.textContent;
+  if (targetLetter) {
+    const targetIsUpper = targetLetter === targetLetter.toUpperCase();
+    const targetHandwritten = isHandwritten(targetIsUpper, currentLevel, isInfinite);
+    targetEl.className = 'target-letter' + (targetHandwritten ? ' handwritten-target' : '');
+  }
+
+  cardsEl.querySelectorAll('.answer-card').forEach((card) => {
+    const cardLetter = card.textContent;
+    const cardIsUpper = cardLetter === cardLetter.toUpperCase();
+    const cardHandwritten = isHandwritten(cardIsUpper, currentLevel, isInfinite);
+    card.className = 'answer-card' + (cardHandwritten ? ' handwritten-card' : '');
+  });
+}
+
 function generateRound() {
   const letters = getAvailableLetters();
 
   // Prefer letters whose base hasn't been used in this level yet.
   let pool = letters.filter(l => !usedBaseLetters.has(l.toUpperCase()));
 
-  // If all base letters exhausted, start a fresh cycle — but never repeat
-  // the last base consecutively.
+  // If all base letters exhausted, start a fresh cycle — but never repeat the last base consecutively.
   if (pool.length === 0) {
     usedBaseLetters.clear();
     pool = lastTargetBase
       ? letters.filter(l => l.toUpperCase() !== lastTargetBase)
       : [...letters];
-    // Fallback: if the pool somehow ends up empty (single-letter set), use all.
+    // Fallback: if the pool ends up empty, use all.
     if (pool.length === 0) pool = [...letters];
   }
 
   const targetIndex = Math.floor(Math.random() * pool.length);
-  let targetLetter = pool[targetIndex];
+  const targetLetter = pool[targetIndex];
 
   lastTargetBase = targetLetter.toUpperCase();
   usedBaseLetters.add(lastTargetBase);
   const targetIsUpper = targetLetter === targetLetter.toUpperCase();
   
   const answer = targetIsUpper ? targetLetter.toLowerCase() : targetLetter.toUpperCase();
-  
   const cardCount = getCardCount();
-  const wrongAnswers = [];
-  const usedLetters = new Set([targetLetter, answer]);
-  
-  while (wrongAnswers.length < cardCount - 1) {
-    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-    if (!usedLetters.has(randomLetter)) {
-      wrongAnswers.push(randomLetter);
-      usedLetters.add(randomLetter);
-    }
-  }
-  
-  const allCards = [answer, ...wrongAnswers];
-  for (let i = allCards.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
-  }
-  
-  let targetClass = 'target-letter';
-  let cardClass = 'answer-card';
-  
-  if (isInfinite) {
-    const targetIsUpper = targetLetter === targetLetter.toUpperCase();
-    if (targetIsUpper) {
-      targetClass += ' target-mixed-upper';
-      cardClass += ' card-mixed-lower';
-    } else {
-      targetClass += ' target-mixed-lower';
-      cardClass += ' card-mixed-upper';
-    }
-  } else if (currentLevel === 'wild') {
-    const targetIsUpper = targetLetter === targetLetter.toUpperCase();
-    if (targetIsUpper) {
-      targetClass += ' target-mixed-upper';
-      cardClass += ' card-mixed-lower';
-    } else {
-      targetClass += ' target-mixed-lower';
-      cardClass += ' card-mixed-upper';
-    }
-  } else {
-    const style = LEVEL_STYLES[currentLevel] || { targetClass: '', cardClass: '' };
-    targetClass += ' ' + style.targetClass;
-    cardClass += ' ' + style.cardClass;
-  }
-  
-  targetEl.className = targetClass;
-  targetEl.textContent = targetLetter;
-  cardsEl.innerHTML = '';
 
-  // Speak the target letter after a short delay (card render settles first)
+  const candidatePool = letters.filter(l => l !== targetLetter && l !== answer);
+  const wrongAnswers = shuffle(candidatePool).slice(0, cardCount - 1);
+  const allCards = shuffle([answer, ...wrongAnswers]);
+
+  const targetIsHandwritten = isHandwritten(targetIsUpper, currentLevel, isInfinite);
+  if (targetEl) {
+    targetEl.className = 'target-letter' + (targetIsHandwritten ? ' handwritten-target' : '');
+    targetEl.textContent = targetLetter;
+  }
+
+  if (cardsEl) {
+    cardsEl.innerHTML = '';
+    allCards.forEach((letter) => {
+      const card = document.createElement('div');
+      const cardIsUpper = letter === letter.toUpperCase();
+      const cardIsHandwritten = isHandwritten(cardIsUpper, currentLevel, isInfinite);
+      card.className = 'answer-card' + (cardIsHandwritten ? ' handwritten-card' : '');
+      card.textContent = letter;
+      card.addEventListener('click', () => handleCardClick(card, letter, answer));
+      cardsEl.appendChild(card);
+    });
+  }
+
+  // Speak the target letter after a short delay
   setTimeout(() => speakLetter(targetLetter), 150);
-  
-  allCards.forEach((letter) => {
-    const card = document.createElement('div');
-    card.className = cardClass;
-    card.textContent = letter;
-    card.addEventListener('click', () => handleCardClick(card, letter, answer));
-    cardsEl.appendChild(card);
-  });
 }
 
 function handleCardClick(card, clickedLetter, correctAnswer) {
@@ -265,7 +309,7 @@ function handleCardClick(card, clickedLetter, correctAnswer) {
   if (clickedLetter === correctAnswer) {
     isProcessing = true;
     score++;
-    scoreEl.textContent = score;
+    if (scoreEl) scoreEl.textContent = score;
     card.classList.add('correct');
     createConfetti(card);
     
@@ -290,18 +334,24 @@ function handleCardClick(card, clickedLetter, correctAnswer) {
 // Voiceover — Web Speech API
 // ---------------------------------------------------------------------------
 let _cachedVoices = [];
-if (window.speechSynthesis) {
-  // Voices may not be ready immediately; cache them when available
-  const loadVoices = () => { _cachedVoices = window.speechSynthesis.getVoices(); };
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  const loadVoices = () => {
+    try {
+      _cachedVoices = window.speechSynthesis.getVoices() || [];
+    } catch (_) {}
+  };
   loadVoices();
-  window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  if (window.speechSynthesis.addEventListener) {
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  } else {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
 }
 
 function pickEnFemaleVoice() {
-  // Preferred female voice names across macOS/iOS/Chrome/Edge
   const femaleKeywords = ['samantha', 'karen', 'victoria', 'moira', 'tessa',
                           'fiona', 'veena', 'zira', 'female', 'woman'];
-  const enVoices = _cachedVoices.filter(v => v.lang.startsWith('en'));
+  const enVoices = _cachedVoices.filter(v => v.lang && v.lang.startsWith('en'));
   return enVoices.find(v => femaleKeywords.some(k => v.name.toLowerCase().includes(k)))
       ?? enVoices.find(v => v.lang === 'en-US')
       ?? enVoices[0]
@@ -309,20 +359,37 @@ function pickEnFemaleVoice() {
 }
 
 function speakLetter(letter) {
-  if (!window.speechSynthesis || getMute()) return;
-  window.speechSynthesis.cancel();
-  // Always use lowercase so TTS doesn't say "capital W" (EN) or "duże W" (PL)
-  const utterance = new SpeechSynthesisUtterance(letter.toLowerCase());
-  const isPL = getLanguage() === 'pl';
-  utterance.lang   = isPL ? 'pl-PL' : 'en-US';
-  utterance.rate   = isPL ? 0.8 : 1.0;
-  utterance.pitch  = 1.0;
-  utterance.volume = 1;
-  if (!isPL) {
-    const femaleVoice = pickEnFemaleVoice();
-    if (femaleVoice) utterance.voice = femaleVoice;
+  if (typeof window === 'undefined' || !window.speechSynthesis || _getMute() || !letter) return;
+  try {
+    window.speechSynthesis.cancel();
+    // Always use lowercase so TTS doesn't say "capital W" or "duże W"
+    const utterance = new SpeechSynthesisUtterance(letter.toLowerCase());
+    const isPL = _getLanguage() === 'pl';
+    utterance.lang   = isPL ? 'pl-PL' : 'en-US';
+    utterance.rate   = isPL ? 0.8 : 1.0;
+    utterance.pitch  = 1.0;
+    utterance.volume = 1;
+
+    if (isPL) {
+      const plVoice = _cachedVoices.find(v => v.lang && v.lang.toLowerCase().startsWith('pl'));
+      if (plVoice) utterance.voice = plVoice;
+    } else {
+      const femaleVoice = pickEnFemaleVoice();
+      if (femaleVoice) utterance.voice = femaleVoice;
+    }
+    window.speechSynthesis.speak(utterance);
+  } catch (_) {}
+}
+
+function getConfettiContainer() {
+  return document.getElementById('confettiContainer') || document.body;
+}
+
+function clearConfetti() {
+  const container = document.getElementById('confettiContainer');
+  if (container) {
+    container.innerHTML = '';
   }
-  window.speechSynthesis.speak(utterance);
 }
 
 function createConfetti(card) {
@@ -331,8 +398,9 @@ function createConfetti(card) {
   const cy = rect.top + rect.height / 2;
   const colors = ['#a3a380', '#d6ce93', '#f7c59f', '#d8a48f', '#bb8588', '#f4e1d2', '#ffd6a5', '#caffbf'];
   const shapes = ['square', 'circle', 'ribbon'];
+  const container = getConfettiContainer();
 
-  // --- Physics confetti ---
+  // Physics confetti
   for (let i = 0; i < 28; i++) {
     const piece = document.createElement('div');
     const shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -345,7 +413,7 @@ function createConfetti(card) {
     const angle = Math.random() * Math.PI * 2;
     const speed = 120 + Math.random() * 220;
     const vx = Math.cos(angle) * speed;
-    const vy = Math.sin(angle) * speed - 180; // bias upward
+    const vy = Math.sin(angle) * speed - 180;
     const gravity = 420 + Math.random() * 120;
     const rotSpeed = (Math.random() - 0.5) * 900;
     const duration = 0.7 + Math.random() * 0.5;
@@ -359,11 +427,11 @@ function createConfetti(card) {
     piece.style.setProperty('--rot', rotSpeed + 'deg');
     piece.style.setProperty('--dur', duration + 's');
 
-    document.body.appendChild(piece);
+    container.appendChild(piece);
     setTimeout(() => piece.remove(), duration * 1000 + 100);
   }
 
-  // --- Floating emoji burst ---
+  // Floating emoji burst
   const emojiSets = [
     ['⭐', '🌟', '✨', '💫'],
     ['❤️', '💛', '💚', '💙'],
@@ -380,27 +448,29 @@ function createConfetti(card) {
     em.style.setProperty('--rise', -(60 + Math.random() * 80) + 'px');
     em.style.setProperty('--sway', (Math.random() - 0.5) * 60 + 'px');
     em.style.setProperty('--delay', (i * 0.07) + 's');
-    document.body.appendChild(em);
+    container.appendChild(em);
     setTimeout(() => em.remove(), 1200);
   }
 
-  // --- Ripple ring on the target letter ---
   flashTarget();
 
-  // --- Score counter pop ---
-  scoreEl.classList.remove('score-pop');
-  void scoreEl.offsetWidth; // reflow
-  scoreEl.classList.add('score-pop');
-  setTimeout(() => scoreEl.classList.remove('score-pop'), 500);
+  if (scoreEl) {
+    scoreEl.classList.remove('score-pop');
+    void scoreEl.offsetWidth;
+    scoreEl.classList.add('score-pop');
+    setTimeout(() => scoreEl.classList.remove('score-pop'), 500);
+  }
 }
 
 function flashTarget() {
+  if (!targetEl) return;
   const ring = document.createElement('div');
   ring.className = 'target-ring';
   const rect = targetEl.getBoundingClientRect();
   ring.style.left = (rect.left + rect.width / 2) + 'px';
   ring.style.top  = (rect.top  + rect.height / 2) + 'px';
-  document.body.appendChild(ring);
+  const container = getConfettiContainer();
+  container.appendChild(ring);
   setTimeout(() => ring.remove(), 700);
 
   targetEl.classList.add('target-flash');
@@ -408,15 +478,17 @@ function flashTarget() {
 }
 
 function updateProgress() {
-  if (!isInfinite) {
+  if (!isInfinite && progressEl) {
     const percentage = (round / ROUNDS_PER_GAME) * 100;
     progressEl.style.width = percentage + '%';
   }
 }
 
 function showLevelComplete() {
-  popup.classList.add('show');
-  
+  if (popup) popup.classList.add('show');
+  if (popupScoreEl) {
+    popupScoreEl.textContent = `${score} / ${ROUNDS_PER_GAME}`;
+  }
   if (score >= 7) {
     unlockNextLevel();
   }
@@ -427,75 +499,134 @@ function resetGame() {
   round = 0;
   usedBaseLetters = new Set();
   lastTargetBase = null;
-  scoreEl.textContent = '0';
-  progressEl.style.width = '0%';
-  popup.classList.remove('show');
+  clearConfetti();
+  if (scoreEl) scoreEl.textContent = '0';
+  if (progressEl) progressEl.style.width = '0%';
+  if (popup) popup.classList.remove('show');
   generateRound();
 }
 
-// Tap the big target letter to replay its pronunciation
-targetEl.addEventListener('click', () => {
-  const letter = targetEl.textContent;
-  if (letter) speakLetter(letter);
-});
-
-// Mute button handling
-const muteBtn = document.getElementById('muteBtn');
-if (muteBtn) {
-  const updateMuteUI = () => {
-    const isMuted = getMute();
-    muteBtn.textContent = isMuted ? '🔇' : '🔊';
-    if (isMuted) {
-      muteBtn.classList.add('muted');
-    } else {
-      muteBtn.classList.remove('muted');
-    }
-  };
-  
-  updateMuteUI();
-  
-  muteBtn.addEventListener('click', () => {
-    const isMuted = !getMute();
-    setMute(isMuted);
-    updateMuteUI();
-    if (!isMuted && targetEl.textContent) {
-      speakLetter(targetEl.textContent);
-    }
+if (targetEl) {
+  targetEl.addEventListener('click', () => {
+    const letter = targetEl.textContent;
+    if (letter) speakLetter(letter);
   });
 }
 
+// ---------------------------------------------------------------------------
+// Controls: Sound (Mute) & Font Switch
+// ---------------------------------------------------------------------------
+
+function updateMuteUI() {
+  const isMuted = _getMute();
+  document.querySelectorAll('.mute-btn').forEach(btn => {
+    btn.textContent = isMuted ? '🔇' : '🔊';
+    btn.classList.toggle('muted', isMuted);
+    btn.setAttribute('aria-pressed', isMuted ? 'true' : 'false');
+    btn.setAttribute('title', isMuted ? 'Sound: Muted' : 'Sound: On');
+  });
+}
+
+function toggleMute() {
+  const isMuted = !_getMute();
+  _setMute(isMuted);
+  updateMuteUI();
+  if (!isMuted && targetEl && targetEl.textContent) {
+    speakLetter(targetEl.textContent);
+  }
+}
+
+function updateFontUI() {
+  const mode = _getFontMode();
+  document.querySelectorAll('.font-btn').forEach(btn => {
+    btn.classList.toggle('active', mode === 'serif');
+    if (mode === 'serif') {
+      btn.textContent = '🔤';
+      btn.setAttribute('title', 'Font: Plain Serif (Handwriting disabled)');
+      btn.setAttribute('aria-label', 'Font: Plain Serif');
+    } else if (mode === 'hand') {
+      btn.textContent = '🖋️';
+      btn.setAttribute('title', 'Font: Handwritten Cursive');
+      btn.setAttribute('aria-label', 'Font: Handwritten');
+    } else {
+      btn.textContent = '✍️';
+      btn.setAttribute('title', 'Font: Level Default (Serifs / Hand / Mixed)');
+      btn.setAttribute('aria-label', 'Font: Level Default');
+    }
+  });
+  applyFontClasses();
+}
+
+function cycleFontMode() {
+  const current = _getFontMode();
+  let next = 'default';
+  if (current === 'default') next = 'serif';
+  else if (current === 'serif') next = 'hand';
+  else next = 'default';
+  
+  _setFontMode(next);
+  updateFontUI();
+}
+
+document.querySelectorAll('.mute-btn').forEach(btn => {
+  btn.addEventListener('click', toggleMute);
+});
+
+document.querySelectorAll('.font-btn').forEach(btn => {
+  btn.addEventListener('click', cycleFontMode);
+});
+
+updateMuteUI();
+updateFontUI();
 loadProgress();
 generateRound();
 
+// ---------------------------------------------------------------------------
+// Language Selector
+// ---------------------------------------------------------------------------
 (function initLangSelector() {
   const selector = document.getElementById('langSelector');
   if (!selector) return;
 
   function updateButtons(lang) {
-    selector.querySelectorAll('.lang-btn').forEach(btn => {
+    document.querySelectorAll('.lang-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.lang === lang);
     });
   }
 
-  updateButtons(getLanguage());
+  updateButtons(_getLanguage());
 
-  selector.addEventListener('click', (e) => {
-    const btn = e.target.closest('.lang-btn');
-    if (!btn) return;
-    const lang = btn.dataset.lang;
-    setLanguage(lang);
-    updateButtons(lang);
-    if (gameScreen && !gameScreen.classList.contains('hidden')) {
-      generateRound();
-    }
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      _setLanguage(lang);
+      updateButtons(lang);
+      if (gameScreen && !gameScreen.classList.contains('hidden')) {
+        generateRound();
+      }
+    });
   });
 })();
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    LETTERS, LETTERS_PL, LEVEL_ORDER, ROUNDS_PER_GAME,
-    ALL_LETTERS, ALL_LOWERCASE, ALL_PL_LETTERS, ALL_PL_LOWERCASE,
-    getAvailableLetters, getCardCount, generateRound,
+    LETTERS,
+    LETTERS_PL,
+    LEVEL_ORDER,
+    ROUNDS_PER_GAME,
+    ALL_LETTERS,
+    ALL_LOWERCASE,
+    ALL_PL_LETTERS,
+    ALL_PL_LOWERCASE,
+    getAvailableLetters,
+    getCardCount,
+    generateRound,
+    isHandwritten,
+    applyFontClasses,
+    updateFontUI,
+    updateMuteUI,
+    cycleFontMode,
+    toggleMute,
     _setState(state) {
       if ('currentLevel' in state) currentLevel = state.currentLevel;
       if ('isInfinite' in state) isInfinite = state.isInfinite;

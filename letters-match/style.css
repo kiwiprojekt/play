@@ -5,46 +5,15 @@
 }
 
 @font-face {
-  font-family: 'Szkolny1';
-  src: url('fonts/Szkolny1.otf') format('opentype');
-}
-
-@font-face {
   font-family: 'SzkolnyBold';
   src: url('fonts/SzkolnyBold.otf') format('opentype');
 }
 
 @font-face {
-  font-family: 'Amatic SC';
-  src: url('fonts/amaticsc-700-latin-ext.woff2') format('woff2'),
-       url('fonts/amaticsc-700-latin.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'Cormorant Garamond';
   src: url('fonts/cormorant-700-latin-ext.woff2') format('woff2'),
        url('fonts/cormorant-700-latin.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Cormorant Garamond';
-  src: url('fonts/cormorant-700-latin-ext.woff2') format('woff2'),
-       url('fonts/cormorant-700-latin.woff2') format('woff2');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Playwrite PL';
-  src: url('fonts/playwritepl-400.woff2') format('woff2');
-  font-weight: 400;
+  font-weight: 700 900;
   font-style: normal;
   font-display: swap;
 }
@@ -132,13 +101,7 @@ body.in-game .menu-back-btn {
   font-weight: 700;
   color: var(--color-5);
   text-shadow: 4px 4px 0 var(--color-4);
-  margin-bottom: 10px;
-}
-
-.menu-subtitle {
-  font-size: 24px;
-  color: var(--color-1);
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .level-grid {
@@ -204,16 +167,6 @@ body.in-game .menu-back-btn {
   z-index: 50;
 }
 
-.game-area {
-  min-height: calc(100vh - 120px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-top: calc(100px * var(--scale));
-}
-
 .header {
   display: flex;
   justify-content: space-between;
@@ -253,6 +206,12 @@ body.in-game .menu-back-btn {
   color: var(--color-1);
 }
 
+.game-controls {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--scale));
+}
+
 .progress {
   width: 100%;
   margin: 0 auto 0 auto;
@@ -270,11 +229,13 @@ body.in-game .menu-back-btn {
 }
 
 .game-area {
-  margin-top: calc(20px * var(--scale));
+  min-height: calc(100vh - 160px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
+  margin-top: calc(20px * var(--scale));
 }
 
 .target-letter {
@@ -295,41 +256,50 @@ body.in-game .menu-back-btn {
   position: relative;
 }
 
-.controls-bar {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  padding-top: calc(8px * var(--scale));
-}
-
+/* Control buttons (Sound & Font switch) */
+.font-btn,
 .mute-btn {
-  background: transparent;
-  border: none;
-  font-size: calc(24px * var(--scale));
+  background: white;
+  border: 2px solid var(--color-4);
+  border-radius: 20px;
+  font-size: calc(20px * var(--scale));
+  padding: calc(6px * var(--scale)) calc(12px * var(--scale));
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-  padding: calc(4px * var(--scale));
+  transition: all 0.2s;
+  box-shadow: 0 2px 0 var(--color-5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  user-select: none;
 }
 
+.font-btn:hover,
 .mute-btn:hover {
-  opacity: 1;
+  background: var(--color-3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--color-5);
+}
+
+.font-btn:active,
+.mute-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--color-5);
+}
+
+.font-btn.active {
+  background: var(--color-4);
+  color: white;
+  border-color: var(--color-5);
 }
 
 .mute-btn.muted {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
-}
-
-.instruction {
-  font-size: calc(26px * var(--scale));
-  color: var(--color-1);
-  margin-bottom: calc(24px * var(--scale));
-  font-weight: 700;
 }
 
 .cards-container {
@@ -396,13 +366,18 @@ body.in-game .menu-back-btn {
   40%, 80% { transform: translateX(10px); }
 }
 
-.handwritten-target {
+/* Handwritten styles */
+.handwritten-target,
+.target-letter.handwritten,
+.target-mixed-lower {
   font-family: 'SzkolnyBold', cursive;
   font-weight: 400;
   font-size: calc(160px * var(--scale));
 }
 
-.handwritten-card {
+.handwritten-card,
+.answer-card.handwritten,
+.card-mixed-lower {
   font-family: 'SzkolnyBold', cursive;
   font-size: calc(64px * var(--scale));
   font-weight: 400;
@@ -412,32 +387,23 @@ body.in-game .menu-back-btn {
   font-family: 'Cormorant Garamond', serif;
   font-size: calc(180px * var(--scale));
   font-weight: 900;
-  color: var(--color-5);
-  text-shadow: 4px 4px 0 var(--color-2), 8px 8px 0 rgba(0,0,0,0.1);
-}
-
-.target-mixed-lower {
-  font-family: 'SzkolnyBold', cursive;
-  font-size: calc(160px * var(--scale));
-  font-weight: 400;
-  color: var(--color-5);
-  text-shadow: 4px 4px 0 var(--color-2), 8px 8px 0 rgba(0,0,0,0.1);
 }
 
 .card-mixed-upper {
   font-family: 'Cormorant Garamond', serif;
   font-size: calc(70px * var(--scale));
   font-weight: 700;
-  color: var(--color-1);
-}
-
-.card-mixed-lower {
-  font-family: 'SzkolnyBold', cursive;
-  font-size: calc(64px * var(--scale));
-  font-weight: 400;
 }
 
 /* ── Confetti pieces ─────────────────────────────────────── */
+.confetti-container {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
 .confetti-piece {
   position: fixed;
   pointer-events: none;
@@ -608,22 +574,28 @@ body.in-game .menu-back-btn {
 .popup-btn.back:hover { box-shadow: 0 4px 0 var(--color-1); }
 .popup-btn.next:hover { box-shadow: 0 4px 0 var(--color-4); }
 
-/* Infinite mode - no progress */
+/* Infinite mode - no progress or score in header */
 .infinite-mode .progress { display: none; }
 .infinite-mode .score-display { display: none; }
 
-/* Language selector */
-.lang-selector {
+/* Top controls on main menu */
+.top-controls {
   position: fixed;
   top: 20px;
   right: 20px;
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   z-index: 100;
 }
 
-body.in-game .lang-selector {
+body.in-game .top-controls {
   display: none;
+}
+
+.lang-selector {
+  display: flex;
+  gap: 6px;
 }
 
 .lang-btn {

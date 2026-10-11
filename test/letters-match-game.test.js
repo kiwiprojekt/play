@@ -16,7 +16,10 @@ const GAME_HTML = `
   <button id="backBtn"></button>
   <button id="popupBack"></button>
   <button id="popupNext"></button>
+  <button id="fontBtn" class="font-btn"></button>
+  <button id="muteBtn" class="mute-btn"></button>
   <div id="langSelector"></div>
+  <div id="confettiContainer"></div>
 `;
 
 let game;
@@ -32,6 +35,12 @@ beforeAll(() => {
   global.STORAGE_PREFIX = 'letterMatch_';
   global.getStorage = (key) => localStorage.getItem('letterMatch_' + key);
   global.setStorage = (key, value) => localStorage.setItem('letterMatch_' + key, value);
+  global.getFontMode = () => localStorage.getItem('letterMatch_fontMode') || 'default';
+  global.setFontMode = (m) => localStorage.setItem('letterMatch_fontMode', m);
+  global.getDisableHandwritten = () => localStorage.getItem('letterMatch_fontMode') === 'serif';
+  global.setDisableHandwritten = (d) => localStorage.setItem('letterMatch_fontMode', d ? 'serif' : 'default');
+  global.getMute = () => localStorage.getItem('letterMatch_mute') === 'true';
+  global.setMute = (v) => localStorage.setItem('letterMatch_mute', v ? 'true' : 'false');
 
   jest.resetModules();
   game = require('../letters-match/game.js');
@@ -206,6 +215,7 @@ describe('LEVEL_ORDER / ROUNDS_PER_GAME', () => {
 describe('generateRound() — no-repeat letters per level', () => {
   beforeEach(() => {
     mockGetLanguage.mockReturnValue('en');
+    localStorage.setItem('letterMatch_fontMode', 'default');
     // Reset used-letter tracking before each test
     game._setState({ usedBaseLetters: [], lastTargetBase: null });
   });
@@ -269,5 +279,110 @@ describe('generateRound() — no-repeat letters per level', () => {
     expect(game._getState().usedBaseLetters.size).toBe(2);
     game.generateRound();
     expect(game._getState().usedBaseLetters.size).toBe(3);
+  });
+});
+
+// ─── isHandwritten() and Typography Resolution ─────────────────────────────
+
+describe('isHandwritten() typography helper', () => {
+  it('easy / medium / hard returns false in default mode', () => {
+    expect(game.isHandwritten(true, 'easy', false, 'default')).toBe(false);
+    expect(game.isHandwritten(false, 'easy', false, 'default')).toBe(false);
+    expect(game.isHandwritten(true, 'medium', false, 'default')).toBe(false);
+    expect(game.isHandwritten(false, 'hard', false, 'default')).toBe(false);
+  });
+
+  it('fun and mixed return true in default mode', () => {
+    expect(game.isHandwritten(true, 'fun', false, 'default')).toBe(true);
+    expect(game.isHandwritten(false, 'fun', false, 'default')).toBe(true);
+    expect(game.isHandwritten(true, 'mixed', false, 'default')).toBe(true);
+    expect(game.isHandwritten(false, 'mixed', false, 'default')).toBe(true);
+  });
+
+  it('wild and infinite return false for uppercase, true for lowercase in default mode', () => {
+    expect(game.isHandwritten(true, 'wild', false, 'default')).toBe(false);
+    expect(game.isHandwritten(false, 'wild', false, 'default')).toBe(true);
+    expect(game.isHandwritten(true, null, true, 'default')).toBe(false);
+    expect(game.isHandwritten(false, null, true, 'default')).toBe(true);
+  });
+
+  it('serif mode disables handwritten font across all levels and cases', () => {
+    expect(game.isHandwritten(true, 'fun', false, 'serif')).toBe(false);
+    expect(game.isHandwritten(false, 'fun', false, 'serif')).toBe(false);
+    expect(game.isHandwritten(true, 'mixed', false, 'serif')).toBe(false);
+    expect(game.isHandwritten(false, 'wild', false, 'serif')).toBe(false);
+    expect(game.isHandwritten(false, null, true, 'serif')).toBe(false);
+  });
+
+  it('hand mode forces handwritten font across all levels', () => {
+    expect(game.isHandwritten(true, 'easy', false, 'hand')).toBe(true);
+    expect(game.isHandwritten(false, 'easy', false, 'hand')).toBe(true);
+    expect(game.isHandwritten(true, 'wild', false, 'hand')).toBe(true);
+  });
+});
+
+// ─── Font Switching UI & Real-Time DOM Updates ─────────────────────────────
+
+describe('Font Switcher & Real-Time Updates', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    mockGetLanguage.mockReturnValue('en');
+  });
+
+  it('renders handwritten classes in Level 4 (fun) under default mode', () => {
+    localStorage.setItem('letterMatch_fontMode', 'default');
+    game._setState({ currentLevel: 'fun', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    game.generateRound();
+
+    const targetEl = document.getElementById('target');
+    expect(targetEl.classList.contains('handwritten-target')).toBe(true);
+
+    const cards = document.querySelectorAll('#cards .answer-card');
+    cards.forEach(card => {
+      expect(card.classList.contains('handwritten-card')).toBe(true);
+    });
+  });
+
+  it('disables handwritten classes in Level 4 (fun) when fontMode is serif', () => {
+    localStorage.setItem('letterMatch_fontMode', 'serif');
+    game._setState({ currentLevel: 'fun', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    game.generateRound();
+
+    const targetEl = document.getElementById('target');
+    expect(targetEl.classList.contains('handwritten-target')).toBe(false);
+
+    const cards = document.querySelectorAll('#cards .answer-card');
+    cards.forEach(card => {
+      expect(card.classList.contains('handwritten-card')).toBe(false);
+    });
+  });
+
+  it('cycleFontMode() cycles through default -> serif -> hand -> default', () => {
+    localStorage.setItem('letterMatch_fontMode', 'default');
+    game.updateFontUI();
+
+    game.cycleFontMode();
+    expect(localStorage.getItem('letterMatch_fontMode')).toBe('serif');
+
+    game.cycleFontMode();
+    expect(localStorage.getItem('letterMatch_fontMode')).toBe('hand');
+
+    game.cycleFontMode();
+    expect(localStorage.getItem('letterMatch_fontMode')).toBe('default');
+  });
+
+  it('applyFontClasses() dynamically switches board typography without resetting round', () => {
+    localStorage.setItem('letterMatch_fontMode', 'default');
+    game._setState({ currentLevel: 'fun', isInfinite: false, usedBaseLetters: [], lastTargetBase: null });
+    game.generateRound();
+
+    const targetEl = document.getElementById('target');
+    expect(targetEl.classList.contains('handwritten-target')).toBe(true);
+
+    // Switch to serif mode in real-time
+    localStorage.setItem('letterMatch_fontMode', 'serif');
+    game.applyFontClasses();
+
+    expect(targetEl.classList.contains('handwritten-target')).toBe(false);
   });
 });
