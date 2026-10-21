@@ -353,3 +353,22 @@ dialog p {
   width: 56px;
   padding: 12px;
 }
+
+/* The original four-second countdown, shown without extra text. */
+dialog[data-auto-advance] #nextButton {
+  position: relative;
+  overflow: hidden;
+}
+dialog[data-auto-advance] #nextButton::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 5px;
+  background: currentColor;
+  transform-origin: left;
+  animation: next-level-countdown 4s linear forwards;
+}
+@keyframes next-level-countdown {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

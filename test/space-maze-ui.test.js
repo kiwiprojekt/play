@@ -32,8 +32,15 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  jest.useFakeTimers();
   localStorage.clear();
   document.getElementById("backButton").click();
+});
+
+afterEach(() => {
+  document.getElementById("backButton").click();
+  jest.clearAllTimers();
+  jest.useRealTimers();
 });
 
 function completeCurrentMaze() {
@@ -168,4 +175,54 @@ it("does not move behind the menu or a completion dialog", () => {
   document.getElementById("backButton").click();
   document.getElementById("maze").dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true }));
   expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+});
+
+it("automatically advances from maze 1 to maze 2 after exactly four seconds", () => {
+  document.querySelector('[data-level="1"]').click();
+  completeCurrentMaze();
+  jest.advanceTimersByTime(3999);
+  expect(document.getElementById("finishPopup").open).toBe(true);
+  jest.advanceTimersByTime(1);
+  expect(document.getElementById("levelLabel").textContent).toBe("2 · Sirius");
+  expect(document.getElementById("finishPopup").open).toBe(false);
+});
+
+it("manual next cannot make a later maze skip its own countdown", () => {
+  document.querySelector('[data-level="1"]').click();
+  completeCurrentMaze();
+  jest.advanceTimersByTime(2000);
+  document.getElementById("nextButton").click();
+  completeCurrentMaze();
+  jest.advanceTimersByTime(2000);
+  expect(document.getElementById("levelLabel").textContent).toBe("2 · Sirius");
+  expect(document.getElementById("finishPopup").open).toBe(true);
+  jest.advanceTimersByTime(2000);
+  expect(document.getElementById("levelLabel").textContent).toBe("3 · Vega");
+});
+
+it("menu return cancels auto-advance and the final maze waits for replay", () => {
+  document.querySelector('[data-level="1"]').click();
+  completeCurrentMaze();
+  document.getElementById("exitButton").click();
+  jest.advanceTimersByTime(5000);
+  expect(document.getElementById("mainMenu").hidden).toBe(false);
+  document.querySelector('[data-level="20"]').click();
+  completeCurrentMaze();
+  jest.advanceTimersByTime(10000);
+  expect(document.getElementById("finishPopup").open).toBe(true);
+  expect(document.getElementById("levelLabel").textContent).toBe("20 · Castor");
+});
+
+it("suspends a completion countdown when leaving and restarts it on browser return", () => {
+  document.querySelector('[data-level="1"]').click();
+  completeCurrentMaze();
+  jest.advanceTimersByTime(1000);
+  window.dispatchEvent(new Event("pagehide"));
+  jest.advanceTimersByTime(10000);
+  expect(document.getElementById("levelLabel").textContent).toBe("1 · Proxima");
+  const restored = new Event("pageshow");
+  Object.defineProperty(restored, "persisted", { value: true });
+  window.dispatchEvent(restored);
+  jest.advanceTimersByTime(4000);
+  expect(document.getElementById("levelLabel").textContent).toBe("2 · Sirius");
 });

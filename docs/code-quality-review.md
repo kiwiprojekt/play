@@ -46,7 +46,7 @@ Walls share one drawing path, and each shared wall appears once.
 Resize changes layout without generating a new maze or resetting the rocket.
 
 Memory completion offers menu, replay, and next theme. Original card sounds and rocket thrust and goal sounds remain.
-Completion waits for the child. The games have no automatic next-level countdowns.
+Memory and maze retain their original four-second automatic next-level countdowns, with manual navigation available. Letter completion waits for the child.
 Letter sessions retain the original ten matches. Wrong choices allow another attempt without losing progress.
 All games support reduced motion and share large menu and sound controls.
 The memory game retains its illustrated sky background and allows a third card to dismiss a mismatch immediately.
@@ -57,8 +57,8 @@ The Polish numbered groups cover all 32 Polish letters and exclude Q, V, and X.
 
 ## Validation
 
-- Jest: 165 tests pass across eight suites.
-- Asset checks pass for 192 HTML links, stylesheet references, memory images, and offline files.
+- Jest: 182 tests pass across nine suites.
+- Asset checks pass for 200 HTML links, stylesheet references, memory images, and offline files.
 - Browser checks use only the Codex harness.
 - Checked every full memory theme at 375 × 667, 667 × 375, 1280 × 720, and 3840 × 2160.
 - All 16 combinations keep every card inside the viewport. Transport uses 4 × 3 in landscape and 3 × 4 in portrait.
@@ -117,3 +117,9 @@ The maze hides on-screen arrows on desktop, retaining them for viewports up to 8
 Arrow clicks return focus to the canvas. Movement key events bubble through the game screen, so focusing another game control does not disable the keyboard. Menu and completion dialogs block movement; browser modifier shortcuts remain available.
 
 Validation: 175 tests pass. A muted Codex browser session verified a phone arrow click followed by an actual keyboard move, and desktop movement while the sound control had focus. Desktop hides the arrows while phone layouts retain them.
+
+## Auto-advance restoration — October 21, 2026
+
+The UI simplification incorrectly removed existing automatic completion flows. Memory now advances to the next theme after four seconds, looping from animals to transport. Maze advances to the next level after four seconds without skipping a level; the final maze waits for replay. A small progress bar on the next button indicates the countdown without adding copy. Letter rounds and their manual level-complete flow remain as in the original game.
+
+Manual next, back, replay, and leaving the page cancel pending timers. Returning through browser history restarts a completed game's countdown. Tests cover exact timing, manual next followed by another completion, menu/replay cancellation, final-level behavior, and browser navigation. All 182 tests pass.

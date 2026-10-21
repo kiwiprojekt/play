@@ -162,7 +162,7 @@ describe("memory round lifecycle", () => {
     jest.advanceTimersByTime(1500);
     expect(nextFirst.classList.contains("flipped")).toBe(true);
   });
-  it("matches are disabled, remain visible, and completion never advances automatically", () => {
+  it("matches stay visible during the original four-second auto-advance countdown", () => {
     memo.startLevel(1);
     const groups = new Map();
     document.querySelectorAll(".card").forEach((card) => {
@@ -175,9 +175,13 @@ describe("memory round lifecycle", () => {
       cards.forEach((card) => expect(card.disabled).toBe(true));
     });
     expect(document.getElementById("finishPopup").open).toBe(true);
-    jest.advanceTimersByTime(10000);
+    jest.advanceTimersByTime(3999);
     expect(document.getElementById("finishPopup").open).toBe(true);
     expect(document.querySelectorAll(".matched")).toHaveLength(12);
+    jest.advanceTimersByTime(1);
+    expect(document.getElementById("finishPopup").open).toBe(false);
+    expect(document.getElementById("levelLabel").textContent).toBe("Dinosaurs");
+    expect(document.querySelectorAll(".card")).toHaveLength(16);
   });
 });
 
@@ -248,4 +252,70 @@ it("returning from browser navigation does not leave stray face-up cards", () =>
   first.click();
   expect(first.classList.contains("flipped")).toBe(true);
   memo.showMain();
+});
+
+function finishMemoBoard() {
+  const groups = new Map();
+  document.querySelectorAll(".card").forEach((card) => {
+    if (!groups.has(card.dataset.value)) groups.set(card.dataset.value, []);
+    groups.get(card.dataset.value).push(card);
+  });
+  groups.forEach((pair) => pair.forEach((card) => card.click()));
+}
+
+it("manual next cancels the old countdown before a new board completes", () => {
+  jest.useFakeTimers();
+  memo.startLevel(1);
+  finishMemoBoard();
+  jest.advanceTimersByTime(2000);
+  document.getElementById("nextButton").click();
+  finishMemoBoard();
+  jest.advanceTimersByTime(2000);
+  expect(document.getElementById("levelLabel").textContent).toBe("Dinosaurs");
+  expect(document.getElementById("finishPopup").open).toBe(true);
+  jest.advanceTimersByTime(2000);
+  expect(document.getElementById("levelLabel").textContent).toBe("Tools");
+  memo.showMain();
+  jest.clearAllTimers();
+  jest.useRealTimers();
+});
+
+it("replay and menu return stop auto-advance, and the last theme loops to the first", () => {
+  jest.useFakeTimers();
+  memo.startLevel(1);
+  finishMemoBoard();
+  document.getElementById("replayButton").click();
+  jest.advanceTimersByTime(5000);
+  expect(document.getElementById("levelLabel").textContent).toBe("Transportation");
+  expect(document.querySelectorAll(".matched")).toHaveLength(0);
+  finishMemoBoard();
+  memo.showMain();
+  jest.advanceTimersByTime(5000);
+  expect(document.getElementById("mainScreen").classList.contains("active")).toBe(true);
+  memo.startLevel(4);
+  finishMemoBoard();
+  jest.advanceTimersByTime(4000);
+  expect(document.getElementById("levelLabel").textContent).toBe("Transportation");
+  memo.showMain();
+  jest.clearAllTimers();
+  jest.useRealTimers();
+});
+
+it("suspends auto-advance on browser navigation and restarts it on return", () => {
+  jest.useFakeTimers();
+  memo.startLevel(1);
+  finishMemoBoard();
+  jest.advanceTimersByTime(1000);
+  window.dispatchEvent(new Event("pagehide"));
+  jest.advanceTimersByTime(10000);
+  expect(document.getElementById("levelLabel").textContent).toBe("Transportation");
+  expect(document.getElementById("finishPopup").open).toBe(true);
+  const restored = new Event("pageshow");
+  Object.defineProperty(restored, "persisted", { value: true });
+  window.dispatchEvent(restored);
+  jest.advanceTimersByTime(4000);
+  expect(document.getElementById("levelLabel").textContent).toBe("Dinosaurs");
+  memo.showMain();
+  jest.clearAllTimers();
+  jest.useRealTimers();
 });

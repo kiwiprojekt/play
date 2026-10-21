@@ -8,8 +8,25 @@ let mazeLevel = 1;
 let moving = false;
 let pointerStart = null;
 let resizeFrame = null;
+let nextMazeTimer = null;
+
+function cancelNextMaze() {
+  clearTimeout(nextMazeTimer);
+  nextMazeTimer = null;
+  mazeDialog.removeAttribute("data-auto-advance");
+}
+
+function scheduleNextMaze() {
+  cancelNextMaze();
+  if (mazeLevel === MazeConfig.sizes.length) return;
+  mazeDialog.setAttribute("data-auto-advance", "");
+  nextMazeTimer = setTimeout(() => {
+    if (mazeDialog.open) document.getElementById("nextButton").click();
+  }, 4000);
+}
 
 function startMaze(level) {
+  cancelNextMaze();
   mazeRenderer.cancel();
   mazeLevel = level;
   moving = false;
@@ -27,6 +44,7 @@ function startMaze(level) {
 }
 
 function showMazeMenu() {
+  cancelNextMaze();
   mazeRenderer.cancel();
   moving = false;
   pointerStart = null;
@@ -100,6 +118,7 @@ function finishMaze() {
   KiwiPlay.effect("assets/laser3.ogg");
   KiwiPlay.celebrate(mazeCanvas);
   mazeDialog.showModal();
+  scheduleNextMaze();
 }
 
 function renderMazeLevels() {
@@ -194,6 +213,7 @@ window.addEventListener("resize", () => {
   });
 });
 window.addEventListener("pagehide", () => {
+  cancelNextMaze();
   mazeRenderer.cancel();
   moving = false;
   pointerStart = null;
@@ -203,5 +223,6 @@ window.addEventListener("pageshow", (event) => {
   mazeRenderer.resize();
   updateDirections();
   if (mazeRun.complete && !mazeDialog.open) finishMaze();
+  else if (mazeDialog.open) scheduleNextMaze();
 });
 renderMazeLevels();

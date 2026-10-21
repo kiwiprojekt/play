@@ -94,6 +94,21 @@ let secondCard = null;
 let matches = 0;
 let mismatchTimer = null;
 let layoutFrame = null;
+let nextLevelTimer = null;
+
+function cancelNextLevel() {
+  clearTimeout(nextLevelTimer);
+  nextLevelTimer = null;
+  finishPopup.removeAttribute("data-auto-advance");
+}
+
+function scheduleNextLevel() {
+  cancelNextLevel();
+  finishPopup.setAttribute("data-auto-advance", "");
+  nextLevelTimer = setTimeout(() => {
+    if (finishPopup.open) document.getElementById("nextButton").click();
+  }, 4000);
+}
 
 function getAssetPath(base, file) {
   return base && file ? base + encodeURIComponent(file) : "";
@@ -107,6 +122,7 @@ function resetTurn() {
 }
 
 function showMain() {
+  cancelNextLevel();
   resetTurn();
   finishPopup.close();
   gameScreen.classList.remove("active");
@@ -115,6 +131,7 @@ function showMain() {
 }
 
 function startLevel(level) {
+  cancelNextLevel();
   resetTurn();
   memoRuntime.effect("assets/stoneHit4.ogg");
   currentLevel = level;
@@ -229,7 +246,10 @@ function handleCardClick(event) {
     updateProgress();
     memoRuntime.tone(true);
     memoRuntime.celebrate(card);
-    if (matches === pairCount) finishPopup.showModal();
+    if (matches === pairCount) {
+      finishPopup.showModal();
+      scheduleNextLevel();
+    }
     return;
   }
   mismatchTimer = setTimeout(hideMismatch, 1200);
@@ -271,11 +291,16 @@ if (typeof ResizeObserver !== "undefined") {
   );
 }
 window.addEventListener("pagehide", () => {
+  cancelNextLevel();
   [firstCard, secondCard].filter(Boolean).forEach((card) => {
     card.classList.remove("flipped");
     card.setAttribute("aria-label", `${memoRuntime.t("Card")} ${Array.from(board.children).indexOf(card) + 1}. ${memoRuntime.t("Turn over")}`);
   });
   resetTurn();
+});
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted && finishPopup.open) scheduleNextLevel();
 });
 
 if (typeof module !== "undefined")
