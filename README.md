@@ -25,6 +25,13 @@ The games use plain HTML, CSS, and JavaScript. No build step or runtime packages
 
 The maze draws only during movement, image loading, or resize. It has no idle animation loop.
 
+## Kiosk mode
+
+Open `/?kiosk` to hide site branding, sound controls, and privacy links. Game menus retain an arrow back to the game picker.
+Use `/?kiosk=pl` for Polish interface labels and the Polish alphabet by default, including when an English alphabet preference was saved earlier.
+The mode follows internal links and works on direct game URLs such as `/letters-match/?kiosk=pl`. Selecting another alphabet still works during that visit.
+Removing the parameter restores the normal site. Kiosk mode does not change the saved sound preference.
+
 ## Artwork and offline use
 
 The games use local WebP artwork and local fonts. PNG originals remain available in Git history.

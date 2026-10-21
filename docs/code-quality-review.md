@@ -99,3 +99,13 @@ See [MDN ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/Resize
 ## CDN release consistency
 
 Live verification found that the CDN could retain an old homepage stylesheet after the new HTML was published. Release generation now stamps the same content-derived version onto HTML runtime references, the worker registration, and every offline URL. The worker uses that version for online requests too, so navigation receives the matching release through both CDN and browser caches. The version includes worker changes, and repeated generation is stable.
+
+## Kiosk follow-up — October 21, 2026
+
+`?kiosk` hides branding, sound controls, and privacy links. `?kiosk=pl` also supplies Polish interface labels and defaults letter matching to the Polish alphabet, overriding an earlier English default on entry. Internal links retain the mode. Each kiosk menu has an arrow back to the game picker; in-game back and replay remain available. Kiosk does not alter the saved mute preference.
+
+Memory theme selectors are square images without captions on desktop and phone layouts. Letter-style selectors retain three visible letter samples and accessible names, with no Print, Hand, or By level captions.
+
+The shared context module owns URL presentation, Polish labels, navigation propagation, and worker startup. Game state stays in each game. The offline worker shares cached files between kiosk and normal URLs and preserves explicitly versioned asset requests during an update.
+
+Validation: 172 tests pass across nine suites; 200 asset/link references pass. Muted Codex browser checks cover normal mode, bare kiosk mode, Polish kiosk navigation through all three games, saved-English override, a complete ten-match Polish letter session, and all 24 memory cards fitting at 375 × 667, 667 × 375, and 1280 × 720.

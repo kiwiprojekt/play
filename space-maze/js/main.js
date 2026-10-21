@@ -56,7 +56,9 @@ function updateDirections() {
   });
   const { x, y } = mazeRun.position;
   document.getElementById("positionStatus").textContent =
-    `Rocket: row ${y + 1}, column ${x + 1}. Star: row ${mazeRun.rows}, column ${mazeRun.cols}.`;
+    KiwiPlay.language === "pl"
+      ? `Rakieta: wiersz ${y + 1}, kolumna ${x + 1}. Gwiazda: wiersz ${mazeRun.rows}, kolumna ${mazeRun.cols}.`
+      : `Rocket: row ${y + 1}, column ${x + 1}. Star: row ${mazeRun.rows}, column ${mazeRun.cols}.`;
 }
 
 function completedMazes() {
@@ -94,7 +96,7 @@ function finishMaze() {
     mazeLevel < 20 ? "→" : "↻";
   document
     .getElementById("nextButton")
-    .setAttribute("aria-label", mazeLevel < 20 ? "Next maze" : "Play again");
+    .setAttribute("aria-label", KiwiPlay.t(mazeLevel < 20 ? "Next maze" : "Play again"));
   KiwiPlay.effect("assets/laser3.ogg");
   KiwiPlay.celebrate(mazeCanvas);
   mazeDialog.showModal();
@@ -109,7 +111,7 @@ function renderMazeLevels() {
     button.dataset.level = index + 1;
     button.setAttribute(
       "aria-label",
-      `Level ${index + 1}: ${name}${completed.has(index + 1) ? ". Completed" : ""}`,
+      `${KiwiPlay.t("Level")} ${index + 1}: ${name}${completed.has(index + 1) ? ". " + KiwiPlay.t("Completed") : ""}`,
     );
     button.innerHTML = `<span aria-hidden="true" class="star-symbol"></span><span class="star-number">${index + 1}</span>${completed.has(index + 1) ? '<span class="completed" aria-hidden="true">✓</span>' : ""}`;
     button.addEventListener("click", () => startMaze(index + 1));

@@ -102,3 +102,27 @@ it("uses one release version for the offline pack and every page runtime referen
     }
   }
 });
+
+it("reuses the complete offline pack for Polish kiosk navigation", async () => {
+  const { events, cached, cacheApi } = setup(() => Promise.reject(new Error("Offline")));
+  let pending;
+  events.fetch({
+    request: { url: "https://play.example/letters-match/?kiosk=pl", method: "GET" },
+    respondWith: (promise) => { pending = promise; },
+  });
+  expect(await pending).toBe(cached);
+  expect(cacheApi.match.mock.calls[0][0]).toMatch(/^https:\/\/play.example\/letters-match\/\?v=[a-f0-9]{12}$/);
+});
+
+it("preserves an explicitly requested asset release during an update", async () => {
+  const response = { ok: true, clone: () => ({}) };
+  const { events, fetch } = setup(() => Promise.resolve(response));
+  let pending;
+  events.fetch({
+    request: { url: "https://play.example/shared/context.js?v=012345abcdef", method: "GET" },
+    respondWith: (promise) => { pending = promise; },
+    waitUntil: () => {},
+  });
+  await pending;
+  expect(fetch).toHaveBeenCalledWith("https://play.example/shared/context.js?v=012345abcdef", { cache: "no-cache" });
+});

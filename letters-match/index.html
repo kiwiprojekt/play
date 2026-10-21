@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#326c48" />
     <title>Letter Match · KiwiPlay</title>
     <link rel="icon" href="../shared/kiwi.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../shared/play.css?v=c2380d4a1c14" />
-    <link rel="stylesheet" href="style.css?v=c2380d4a1c14" />
+    <link rel="stylesheet" href="../shared/play.css?v=9bb229f928c7" />
+    <link rel="stylesheet" href="style.css?v=9bb229f928c7" />
   </head>
   <body>
     <main class="main-menu" id="mainMenu">
@@ -27,7 +27,8 @@
           aria-label="Turn sound off"
         ></button>
       </header>
-      <div class="menu-heading"><h1>Letter Match</h1></div>
+      <div class="menu-heading">
+          <a class="control kiosk-home" href="../" aria-label="Choose a game">←</a><h1 data-i18n>Letter Match</h1></div>
       <div class="letter-settings">
         <div
           class="choice-row alphabet-switch"
@@ -54,16 +55,14 @@
         </div>
         <div class="style-switch" role="group" aria-label="Letter style">
           <button type="button" data-font="serif" aria-label="Printed letters">
-            <span class="style-example print" aria-hidden="true">Aa</span
-            ><span>Print</span>
+            <span class="style-example print" aria-hidden="true">Aa</span>
           </button>
           <button
             type="button"
             data-font="hand"
             aria-label="Handwritten letters"
           >
-            <span class="style-example hand" aria-hidden="true">Aa</span
-            ><span>Hand</span>
+            <span class="style-example hand" aria-hidden="true">Aa</span>
           </button>
           <button
             type="button"
@@ -71,8 +70,7 @@
             aria-label="Letter style follows the level"
           >
             <span class="style-example" aria-hidden="true"
-              >A<span class="hand">a</span></span
-            ><span>By level</span>
+              >A<span class="hand">a</span></span>
           </button>
         </div>
       </div>
@@ -136,16 +134,14 @@
                 data-font="serif"
                 aria-label="Printed letters"
               >
-                <span class="style-example" aria-hidden="true">Aa</span
-                ><span>Print</span>
+                <span class="style-example" aria-hidden="true">Aa</span>
               </button>
               <button
                 type="button"
                 data-font="hand"
                 aria-label="Handwritten letters"
               >
-                <span class="style-example hand" aria-hidden="true">Aa</span
-                ><span>Hand</span>
+                <span class="style-example hand" aria-hidden="true">Aa</span>
               </button>
               <button
                 type="button"
@@ -153,8 +149,7 @@
                 aria-label="Letter style follows the level"
               >
                 <span class="style-example" aria-hidden="true"
-                  >A<span class="hand">a</span></span
-                ><span>By level</span>
+                  >A<span class="hand">a</span></span>
               </button>
             </div>
           </details>
@@ -188,7 +183,7 @@
     </section>
     <dialog id="popup" aria-labelledby="popupTitle">
       <div class="celebration" aria-hidden="true">★</div>
-      <h2 class="sr-only" id="popupTitle">Level complete</h2>
+      <h2 class="sr-only" id="popupTitle" data-i18n>Level complete</h2>
       <p id="popupScore" class="sr-only"></p>
       <div class="dialog-actions">
         <button class="secondary" id="popupBack" aria-label="Back to menu">
@@ -198,9 +193,10 @@
         </button>
       </div>
     </dialog>
-    <script src="../shared/play.js?v=c2380d4a1c14"></script>
-    <script src="settings.js?v=c2380d4a1c14"></script>
-    <script src="letters.js?v=c2380d4a1c14"></script>
-    <script src="game.js?v=c2380d4a1c14"></script>
+    <script src="../shared/context.js?v=9bb229f928c7"></script>
+    <script src="../shared/play.js?v=9bb229f928c7"></script>
+    <script src="settings.js?v=9bb229f928c7"></script>
+    <script src="letters.js?v=9bb229f928c7"></script>
+    <script src="game.js?v=9bb229f928c7"></script>
   </body>
 </html>

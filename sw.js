@@ -1,9 +1,12 @@
-const CACHE_NAME = "kiwiplay-c2380d4a1c14";
+const CACHE_NAME = "kiwiplay-9bb229f928c7";
 // A release uses one URL version across HTML, runtime files, and its offline pack.
 // This also avoids stale responses in a CDN cache outside the browser.
 function versionedURL(value) {
   const url = new URL(value, self.location.origin);
-  url.searchParams.set("v", CACHE_NAME.slice("kiwiplay-".length));
+  // Kiosk changes client presentation; its HTML and assets are the same offline files.
+  url.searchParams.delete("kiosk");
+  if (!url.searchParams.has("v"))
+    url.searchParams.set("v", CACHE_NAME.slice("kiwiplay-".length));
   return url.href;
 }
 self.addEventListener("install", (event) => {

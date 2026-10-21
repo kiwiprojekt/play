@@ -12,7 +12,10 @@ function setStorage(key, value) {
 const VALID_LANGUAGES = ["en", "pl"];
 const DEFAULT_LANGUAGE = "en";
 
+let chosenLanguage = null;
 function getLanguage() {
+  if (chosenLanguage) return chosenLanguage;
+  if (settingsRuntime.kiosk && settingsRuntime.language === "pl") return "pl";
   const saved = getStorage("language");
   if (saved && VALID_LANGUAGES.includes(saved)) {
     return saved;
@@ -25,6 +28,7 @@ function setLanguage(language) {
     console.warn(`Invalid language: ${language}. Using default.`);
     return;
   }
+  chosenLanguage = language;
   setStorage("language", language);
 }
 

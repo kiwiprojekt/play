@@ -119,7 +119,7 @@ function generateRound() {
   ]);
   if (targetEl) {
     targetEl.textContent = target;
-    targetEl.setAttribute("aria-label", `Hear letter ${target}`);
+    targetEl.setAttribute("aria-label", `${letterRuntime.t("Hear letter")} ${target}`);
   }
   if (cardsEl) {
     const fragment = document.createDocumentFragment();
@@ -147,7 +147,7 @@ function handleCardClick(card, correct) {
   if (!correct) {
     card.classList.add("wrong");
     document.getElementById("roundHint").textContent =
-      "Have another look. You can do it!";
+      letterRuntime.t("Have another look. You can do it!");
     const timer = setTimeout(() => {
       card.classList.remove("wrong");
       wrongTimers.delete(timer);
@@ -157,14 +157,14 @@ function handleCardClick(card, correct) {
   }
   isProcessing = true;
   card.classList.add("correct");
-  card.setAttribute("aria-label", `${card.textContent}. A match!`);
+  card.setAttribute("aria-label", `${card.textContent}. ${letterRuntime.t("A match!")}`);
   letterRuntime.tone(true);
   letterRuntime.celebrate(card);
   score++;
   if (scoreEl) scoreEl.textContent = score;
   if (progressEl)
     progressEl.style.width = `${(score / ROUNDS_PER_GAME) * 100}%`;
-  document.getElementById("roundHint").textContent = "A match!";
+  document.getElementById("roundHint").textContent = letterRuntime.t("A match!");
   roundTimer = setTimeout(() => {
     if (!isInfinite && score >= ROUNDS_PER_GAME) {
       document.getElementById("popupScore").textContent =
@@ -172,7 +172,7 @@ function handleCardClick(card, correct) {
       popup.showModal();
     } else {
       document.getElementById("roundHint").textContent =
-        "Find the matching letter";
+        letterRuntime.t("Find the matching letter");
       generateRound();
     }
   }, 750);
@@ -193,7 +193,7 @@ function startGame(level) {
   gameScreen.classList.remove("hidden");
   gameScreen.classList.toggle("infinite-mode", isInfinite);
   document.body.classList.add("in-game");
-  document.getElementById("roundHint").textContent = "Find the matching letter";
+  document.getElementById("roundHint").textContent = letterRuntime.t("Find the matching letter");
   generateRound();
   targetEl.focus();
 }
@@ -298,6 +298,9 @@ function updateLanguages() {
     );
   });
   document.querySelectorAll(".level-card[data-level]").forEach((card) => {
+    const index = LEVEL_ORDER.indexOf(card.dataset.level);
+    card.setAttribute("aria-label", card.dataset.level === "infinite"
+      ? letterRuntime.t("Endless mode") : `${letterRuntime.t("Level")} ${index + 1}`);
     const preview = card.querySelector(".level-example");
     if (preview)
       preview.textContent =

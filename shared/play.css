@@ -317,3 +317,39 @@ dialog p {
 .game-toolbar > .control {
   min-width: 56px;
 }
+
+/* Kiosk keeps game navigation and play controls, without the site header. */
+.kiosk .play-header,
+.kiosk .play-footer,
+.kiosk [data-sound],
+.kiosk a[href*="privacy.html"] {
+  display: none !important;
+}
+.kiosk .game-toolbar {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 56px;
+}
+
+.kiosk-home {
+  display: none;
+}
+.kiosk #mainMenu {
+  display: flow-root;
+}
+.kiosk .menu-heading {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 56px;
+}
+.kiosk .menu-heading h1 {
+  margin: 0 68px;
+}
+.kiosk .kiosk-home {
+  display: inline-flex;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 56px;
+  padding: 12px;
+}

@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#326c48" />
     <title>Memory Match · KiwiPlay</title>
     <link rel="icon" href="../shared/kiwi.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../shared/play.css?v=c2380d4a1c14" />
-    <link rel="stylesheet" href="styles.css?v=c2380d4a1c14" />
+    <link rel="stylesheet" href="../shared/play.css?v=9bb229f928c7" />
+    <link rel="stylesheet" href="styles.css?v=9bb229f928c7" />
   </head>
   <body>
     <main class="app">
@@ -30,16 +30,17 @@
           ></button>
         </header>
         <div class="menu-heading">
-          <h1>Memory Match</h1>
+          <a class="control kiosk-home" href="../" aria-label="Choose a game">←</a>
+          <h1 data-i18n>Memory Match</h1>
         </div>
         <div class="choice-row" aria-label="How many pairs?">
-          <button type="button" data-pairs="3" aria-pressed="false">
+          <button type="button" data-pairs="3" aria-pressed="false" data-i18n>
             3 pairs
           </button>
-          <button type="button" data-pairs="6" aria-pressed="false">
+          <button type="button" data-pairs="6" aria-pressed="false" data-i18n>
             6 pairs
           </button>
-          <button type="button" data-pairs="all" aria-pressed="true">
+          <button type="button" data-pairs="all" aria-pressed="true" data-i18n>
             All pairs
           </button>
         </div>
@@ -86,7 +87,7 @@
     </main>
     <dialog id="finishPopup" aria-labelledby="finishTitle">
       <div class="celebration" aria-hidden="true">✦</div>
-      <h2 id="finishTitle" class="sr-only">All pairs found</h2>
+      <h2 id="finishTitle" class="sr-only" data-i18n>All pairs found</h2>
       <div class="dialog-actions">
         <button
           id="exitButton"
@@ -106,7 +107,8 @@
         <button id="nextButton" class="primary" type="button" aria-label="Next theme">→</button>
       </div>
     </dialog>
-    <script src="../shared/play.js?v=c2380d4a1c14"></script>
-    <script src="script.js?v=c2380d4a1c14"></script>
+    <script src="../shared/context.js?v=9bb229f928c7"></script>
+    <script src="../shared/play.js?v=9bb229f928c7"></script>
+    <script src="script.js?v=9bb229f928c7"></script>
   </body>
 </html>

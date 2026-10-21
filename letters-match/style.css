@@ -53,7 +53,7 @@ body {
   justify-content: center;
   align-items: center;
   min-width: 64px;
-  min-height: 72px;
+  min-height: 60px;
   padding: 5px 8px;
   gap: 3px;
   border: 2px solid #d8c4ae;
@@ -61,9 +61,6 @@ body {
   background: var(--paper);
   font-size: 12px;
   font-weight: 700;
-}
-.style-switch button > span:last-child {
-  white-space: nowrap;
 }
 .style-switch button[aria-pressed="true"] {
   background: #e5eddb;

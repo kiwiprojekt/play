@@ -1,5 +1,8 @@
 /* Small browser helpers shared by the games. No game state lives here. */
 (function (root) {
+  const context = typeof module !== "undefined"
+    ? require("./context.js") : root.KiwiContext;
+  const { t } = context;
   const memory = new Map();
   const storage = {
     get(key, fallback = null) {
@@ -41,9 +44,9 @@
       button.setAttribute("aria-pressed", String(isMuted));
       button.setAttribute(
         "aria-label",
-        isMuted ? "Turn sound on" : "Turn sound off",
+        t(isMuted ? "Turn sound on" : "Turn sound off"),
       );
-      button.title = isMuted ? "Sound off" : "Sound on";
+      button.title = t(isMuted ? "Sound off" : "Sound on");
     });
   }
   const effects = new Map();
@@ -110,6 +113,7 @@
     setTimeout(() => burst.remove(), 1100);
   }
   const api = {
+    ...context,
     storage,
     shuffle,
     muted,
@@ -136,13 +140,6 @@
       });
     });
     updateSound();
-    if ("serviceWorker" in navigator && document.currentScript) {
-      navigator.serviceWorker
-        .register(new URL(
-          "../sw.js" + new URL(document.currentScript.src).search,
-          document.currentScript.src,
-        ))
-        .catch(() => {});
-    }
+
   }
 })(typeof window !== "undefined" ? window : null);

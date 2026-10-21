@@ -126,7 +126,7 @@ function startLevel(level) {
   finishPopup.close();
   mainScreen.classList.remove("active");
   gameScreen.classList.add("active");
-  levelLabel.textContent = levels[level].title;
+  levelLabel.textContent = memoRuntime.t(levels[level].title);
   updateProgress();
   buildBoard();
   document.getElementById("backButton").focus();
@@ -146,8 +146,8 @@ function buildBoard() {
     card.type = "button";
     card.className = "card";
     card.dataset.value = value;
-    card.dataset.picture = `${config.title} picture ${config.images.indexOf(value) + 1}`;
-    card.setAttribute("aria-label", `Card ${index + 1}. Turn over`);
+    card.dataset.picture = `${memoRuntime.t(config.title)} ${memoRuntime.t("picture")} ${config.images.indexOf(value) + 1}`;
+    card.setAttribute("aria-label", `${memoRuntime.t("Card")} ${index + 1}. ${memoRuntime.t("Turn over")}`);
     card.innerHTML = `<span class="card-inner" aria-hidden="true">
       <span class="card-face card-back"><img alt="" draggable="false" src="${getAssetPath(config.imageBase, config.backImage)}"></span>
       <span class="card-face card-front"><img alt="" draggable="false" src="${getAssetPath(config.imageBase, value)}"></span>
@@ -199,7 +199,7 @@ function hideMismatch() {
     item.classList.remove("flipped");
     item.setAttribute(
       "aria-label",
-      `Card ${Array.from(board.children).indexOf(item) + 1}. Turn over`,
+      `${memoRuntime.t("Card")} ${Array.from(board.children).indexOf(item) + 1}. ${memoRuntime.t("Turn over")}`,
     );
   });
   resetTurn();
@@ -222,7 +222,7 @@ function handleCardClick(event) {
     [firstCard, secondCard].forEach((item) => {
       item.classList.add("matched");
       item.disabled = true;
-      item.setAttribute("aria-label", `${item.dataset.picture}. Matched`);
+      item.setAttribute("aria-label", `${item.dataset.picture}. ${memoRuntime.t("Matched")}`);
     });
     matches++;
     resetTurn();
@@ -239,8 +239,8 @@ board.addEventListener("click", handleCardClick);
 document.querySelectorAll(".level-button").forEach((button) => {
   const level = Number(button.dataset.level);
   const config = levels[level];
-  button.setAttribute("aria-label", `${config.title} memory game`);
-  button.innerHTML = `<img src="${getAssetPath(config.imageBase, config.coverImage)}" alt="" width="640" height="400"><span>${config.title}</span>`;
+  button.setAttribute("aria-label", `${memoRuntime.t(config.title)} ${memoRuntime.t("memory game")}`);
+  button.innerHTML = `<img src="${getAssetPath(config.imageBase, config.coverImage)}" alt="" width="640" height="640">`;
   button.addEventListener("click", () => startLevel(level));
 });
 document.querySelectorAll("[data-pairs]").forEach((button) => {
@@ -273,7 +273,7 @@ if (typeof ResizeObserver !== "undefined") {
 window.addEventListener("pagehide", () => {
   [firstCard, secondCard].filter(Boolean).forEach((card) => {
     card.classList.remove("flipped");
-    card.setAttribute("aria-label", `Card ${Array.from(board.children).indexOf(card) + 1}. Turn over`);
+    card.setAttribute("aria-label", `${memoRuntime.t("Card")} ${Array.from(board.children).indexOf(card) + 1}. ${memoRuntime.t("Turn over")}`);
   });
   resetTurn();
 });

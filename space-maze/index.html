@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#182841" />
     <title>Space Maze · KiwiPlay</title>
     <link rel="icon" href="../shared/kiwi.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../shared/play.css?v=c2380d4a1c14" />
-    <link rel="stylesheet" href="style.css?v=c2380d4a1c14" />
+    <link rel="stylesheet" href="../shared/play.css?v=9bb229f928c7" />
+    <link rel="stylesheet" href="style.css?v=9bb229f928c7" />
   </head>
   <body>
     <main id="mainMenu">
@@ -27,7 +27,8 @@
         ></button>
       </header>
       <div class="menu-heading">
-        <h1>Space Maze</h1>
+          <a class="control kiosk-home" href="../" aria-label="Choose a game">←</a>
+        <h1 data-i18n>Space Maze</h1>
       </div>
       <div class="galaxy">
         <div class="galaxy-intro">
@@ -51,7 +52,7 @@
           aria-label="Turn sound off"
         ></button>
       </header>
-      <p class="sr-only">Follow the little lights to the star</p>
+      <p class="sr-only" data-i18n>Follow the little lights to the star</p>
       <div class="maze-wrap">
         <canvas
           id="maze"
@@ -90,7 +91,7 @@
     </section>
     <dialog id="finishPopup" aria-labelledby="finishTitle">
       <div class="celebration" aria-hidden="true">✦</div>
-      <h2 id="finishTitle" class="sr-only">Star found</h2>
+      <h2 id="finishTitle" class="sr-only" data-i18n>Star found</h2>
       <div class="dialog-actions">
         <button class="secondary" id="exitButton" aria-label="Back to menu">
           ←</button
@@ -99,11 +100,12 @@
         </button>
       </div>
     </dialog>
-    <script src="../shared/play.js?v=c2380d4a1c14"></script>
-    <script src="js/config.js?v=c2380d4a1c14"></script>
-    <script src="js/mazeGenerator.js?v=c2380d4a1c14"></script>
-    <script src="js/run.js?v=c2380d4a1c14"></script>
-    <script src="js/renderer.js?v=c2380d4a1c14"></script>
-    <script src="js/main.js?v=c2380d4a1c14"></script>
+    <script src="../shared/context.js?v=9bb229f928c7"></script>
+    <script src="../shared/play.js?v=9bb229f928c7"></script>
+    <script src="js/config.js?v=9bb229f928c7"></script>
+    <script src="js/mazeGenerator.js?v=9bb229f928c7"></script>
+    <script src="js/run.js?v=9bb229f928c7"></script>
+    <script src="js/renderer.js?v=9bb229f928c7"></script>
+    <script src="js/main.js?v=9bb229f928c7"></script>
   </body>
 </html>
