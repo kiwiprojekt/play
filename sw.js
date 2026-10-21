@@ -1,50 +1,54 @@
-const CACHE_NAME = 'kiwiplay-shell-v1';
-
-// Only cache the app shell — never game content or games list
-const SHELL_ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/assets/bg.png',
-  '/manifest.json'
-];
-
-// Paths that must always come from the network (never cached)
-function isNetworkOnly(url) {
-  const path = new URL(url).pathname;
-  return (
-    path.endsWith('games.json') ||
-    path.includes('/space-maze/') ||
-    path.includes('/memo/') ||
-    path.includes('/letters-match/')
-  );
-}
-
-self.addEventListener('install', event => {
+const CACHE_NAME = "kiwiplay-236e5a690a82";
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS))
+    fetch("./precache.json", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error("Offline pack is unavailable");
+        return response.json();
+      })
+      .then((assets) =>
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(assets)),
+      )
+      .then(() => self.skipWaiting()),
   );
-  self.skipWaiting();
 });
-
-self.addEventListener('activate', event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key.startsWith("kiwiplay-") && key !== CACHE_NAME)
+            .map((key) => caches.delete(key)),
+        ),
+      )
+      .then(() => self.clients.claim()),
   );
-  self.clients.claim();
 });
-
-self.addEventListener('fetch', event => {
-  // Always go to network for game content and games list
-  if (isNetworkOnly(event.request.url)) {
-    event.respondWith(fetch(event.request));
+// Fresh code online; the complete game pack remains available offline after installation.
+self.addEventListener("fetch", (event) => {
+  if (
+    event.request.method !== "GET" ||
+    new URL(event.request.url).origin !== self.location.origin
+  )
     return;
-  }
-
-  // Shell: cache-first
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    fetch(event.request, { cache: "no-cache" })
+      .then((response) => {
+        if (response.ok) {
+          const copy = response.clone();
+          event.waitUntil(
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, copy))
+              .catch(() => {}),
+          );
+        }
+        return response;
+      })
+      .catch(
+        async () => (await caches.match(event.request)) || Response.error(),
+      ),
   );
 });

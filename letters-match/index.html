@@ -1,94 +1,206 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Letter Match</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <a href="https://play.kiwiprojekt.pl" class="menu-back-btn">🥝 KiwiPlay</a>
-
-  <div class="top-controls" id="topControls">
-    <div class="lang-selector" id="langSelector">
-      <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
-      <button class="lang-btn" data-lang="pl" aria-label="Polski">PL</button>
-    </div>
-    <button id="fontBtnMenu" class="font-btn" type="button" aria-label="Font style" title="Font: Level Default (Serifs / Hand / Mixed)">✍️</button>
-    <button id="muteBtnMenu" class="mute-btn" type="button" aria-label="Mute audio" title="Sound: On">🔊</button>
-  </div>
-
-  <!-- Main Menu -->
-  <div class="main-menu" id="mainMenu">
-    <h1 class="menu-title">Letter Match</h1>
-    <div class="level-grid">
-      <div class="level-card" data-level="easy" role="button" tabindex="0" aria-label="Level 1">
-        <div class="level-card-title">1</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#326c48" />
+    <title>Letter Match · KiwiPlay</title>
+    <link rel="icon" href="../shared/kiwi.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/play.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="main-menu" id="mainMenu">
+      <header class="play-header">
+        <a href="../" class="brand"
+          ><img
+            src="../shared/kiwi.svg"
+            width="36"
+            height="36"
+            alt=""
+          />KiwiPlay</a
+        >
+        <button
+          class="control sound-control"
+          data-sound
+          type="button"
+          aria-label="Turn sound off"
+        ></button>
+      </header>
+      <div class="menu-heading"><h1>Letter Match</h1></div>
+      <div class="letter-settings">
+        <div
+          class="choice-row alphabet-switch"
+          id="langSelector"
+          role="group"
+          aria-label="Alphabet and pronunciation"
+        >
+          <button
+            class="lang-btn"
+            type="button"
+            data-lang="en"
+            aria-label="English alphabet and pronunciation"
+          >
+            EN
+          </button>
+          <button
+            class="lang-btn"
+            type="button"
+            data-lang="pl"
+            aria-label="Polish alphabet and pronunciation"
+          >
+            PL
+          </button>
+        </div>
+        <div class="style-switch" role="group" aria-label="Letter style">
+          <button type="button" data-font="serif" aria-label="Printed letters">
+            <span class="style-example print" aria-hidden="true">Aa</span
+            ><span>Print</span>
+          </button>
+          <button
+            type="button"
+            data-font="hand"
+            aria-label="Handwritten letters"
+          >
+            <span class="style-example hand" aria-hidden="true">Aa</span
+            ><span>Hand</span>
+          </button>
+          <button
+            type="button"
+            data-font="default"
+            aria-label="Letter style follows the level"
+          >
+            <span class="style-example" aria-hidden="true"
+              >A<span class="hand">a</span></span
+            ><span>By level</span>
+          </button>
+        </div>
       </div>
-      <div class="level-card" data-level="medium" role="button" tabindex="0" aria-label="Level 2">
-        <div class="level-card-title">2</div>
+      <div class="level-grid" aria-label="Choose a level">
+        <button class="level-card" data-level="easy" aria-label="Level 1">
+          <span class="level-number" aria-hidden="true">1</span
+          ><span class="level-example" aria-hidden="true">Oo</span>
+        </button>
+        <button class="level-card" data-level="medium" aria-label="Level 2">
+          <span class="level-number" aria-hidden="true">2</span
+          ><span class="level-example" aria-hidden="true">Aa</span>
+        </button>
+        <button class="level-card" data-level="hard" aria-label="Level 3">
+          <span class="level-number" aria-hidden="true">3</span
+          ><span class="level-example" aria-hidden="true">Rr</span>
+        </button>
+        <button class="level-card" data-level="fun" aria-label="Level 4">
+          <span class="level-number" aria-hidden="true">4</span
+          ><span class="level-example hand" aria-hidden="true">Bb</span>
+        </button>
+        <button class="level-card" data-level="mixed" aria-label="Level 5">
+          <span class="level-number" aria-hidden="true">5</span
+          ><span class="level-example hand" aria-hidden="true">Mm</span>
+        </button>
+        <button class="level-card" data-level="wild" aria-label="Level 6">
+          <span class="level-number" aria-hidden="true">6</span
+          ><span class="level-example" aria-hidden="true">Zz</span>
+        </button>
+        <button
+          class="level-card infinite"
+          data-level="infinite"
+          aria-label="Endless mode"
+        >
+          <span class="infinity" aria-hidden="true">∞</span>
+        </button>
       </div>
-      <div class="level-card" data-level="hard" role="button" tabindex="0" aria-label="Level 3">
-        <div class="level-card-title">3</div>
+      <footer class="play-footer"><a href="../privacy.html">Privacy</a></footer>
+    </main>
+    <section
+      class="game-screen hidden"
+      id="gameScreen"
+      aria-label="Letter matching game"
+    >
+      <header class="game-toolbar">
+        <button class="control" id="backBtn" aria-label="Back to menu">
+          ←
+        </button>
+        <span class="game-label score-display"
+          ><span id="score">0</span> / <span id="roundTotal">10</span></span
+        >
+        <div class="game-controls">
+          <details class="in-game-style">
+            <summary class="control" aria-label="Letter style">Aa</summary>
+            <div
+              class="style-switch style-popover"
+              role="group"
+              aria-label="Letter style"
+            >
+              <button
+                type="button"
+                data-font="serif"
+                aria-label="Printed letters"
+              >
+                <span class="style-example" aria-hidden="true">Aa</span
+                ><span>Print</span>
+              </button>
+              <button
+                type="button"
+                data-font="hand"
+                aria-label="Handwritten letters"
+              >
+                <span class="style-example hand" aria-hidden="true">Aa</span
+                ><span>Hand</span>
+              </button>
+              <button
+                type="button"
+                data-font="default"
+                aria-label="Letter style follows the level"
+              >
+                <span class="style-example" aria-hidden="true"
+                  >A<span class="hand">a</span></span
+                ><span>By level</span>
+              </button>
+            </div>
+          </details>
+          <button
+            class="control sound-control"
+            data-sound
+            type="button"
+            aria-label="Turn sound off"
+          ></button>
+        </div>
+      </header>
+      <div class="progress" aria-hidden="true">
+        <div class="progress-fill" id="progress"></div>
       </div>
-      <div class="level-card" data-level="fun" role="button" tabindex="0" aria-label="Level 4">
-        <div class="level-card-title">4</div>
+      <div class="game-area">
+        <button
+          class="target-letter"
+          id="target"
+          aria-label="Hear the letter"
+        ></button>
+        <p class="sr-only" id="roundHint" role="status">
+          Find the matching letter
+        </p>
+        <div class="match-arrow" aria-hidden="true">↓</div>
+        <div
+          class="cards-container"
+          id="cards"
+          aria-label="Choose the matching letter"
+        ></div>
       </div>
-      <div class="level-card" data-level="mixed" role="button" tabindex="0" aria-label="Level 5">
-        <div class="level-card-title">5</div>
+    </section>
+    <dialog id="popup" aria-labelledby="popupTitle">
+      <div class="celebration" aria-hidden="true">★</div>
+      <h2 class="sr-only" id="popupTitle">Level complete</h2>
+      <p id="popupScore" class="sr-only"></p>
+      <div class="dialog-actions">
+        <button class="secondary" id="popupBack" aria-label="Back to menu">
+          ←</button
+        ><button class="primary" id="popupNext" aria-label="Next level">
+          →
+        </button>
       </div>
-      <div class="level-card" data-level="wild" role="button" tabindex="0" aria-label="Level 6">
-        <div class="level-card-title">6</div>
-      </div>
-      <div class="level-card infinite" data-level="infinite" role="button" tabindex="0" aria-label="Infinite Mode">
-        <div class="level-card-title">∞</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Game Screen -->
-  <div class="game-screen hidden" id="gameScreen">
-    <div class="header">
-      <button class="back-btn" id="backBtn" aria-label="Back to menu">← Menu</button>
-      <div class="score-display">
-        <span class="score-label">Score:</span>
-        <span id="score">0</span>
-      </div>
-      <div class="game-controls">
-        <button id="fontBtn" class="font-btn" type="button" aria-label="Font style" title="Font: Level Default (Serifs / Hand / Mixed)">✍️</button>
-        <button id="muteBtn" class="mute-btn" type="button" aria-label="Mute audio" title="Sound: On">🔊</button>
-      </div>
-    </div>
-
-    <div class="progress">
-      <div class="progress-fill" id="progress"></div>
-    </div>
-
-    <div class="game-area">
-      <div class="target-letter" id="target"></div>
-      <div class="cards-container" id="cards"></div>
-    </div>
-  </div>
-
-  <!-- Level Complete Popup -->
-  <div class="popup-overlay" id="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
-    <div class="popup-content">
-      <h2 class="popup-title" id="popupTitle">Great Job!</h2>
-      <div class="popup-score" id="popupScore"></div>
-      <div class="popup-buttons">
-        <button class="popup-btn back" id="popupBack">← Back</button>
-        <button class="popup-btn next" id="popupNext">Next →</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="confettiContainer" class="confetti-container" aria-hidden="true"></div>
-
-  <footer class="game-footer">
-    <a href="/privacy.html" style="color: var(--color-5); text-decoration: underline; font-weight: 700;">Privacy Policy</a>
-  </footer>
-
-  <script src="settings.js"></script>
-  <script src="game.js"></script>
-</body>
+    </dialog>
+    <script src="../shared/play.js"></script>
+    <script src="settings.js"></script>
+    <script src="letters.js"></script>
+    <script src="game.js"></script>
+  </body>
 </html>

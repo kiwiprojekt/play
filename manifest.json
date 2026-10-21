@@ -4,8 +4,8 @@
   "description": "Fun games for kids",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFF6C0",
-  "theme_color": "#2F6B3F",
+  "background_color": "#f7f6e9",
+  "theme_color": "#326c48",
   "icons": [
     {
       "src": "assets/icon-192.png",

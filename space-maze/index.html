@@ -1,59 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Maze</title>
-    <script src="js/phaser.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #0a0a2e;
-            overflow: hidden;
-        }
-        #game-container {
-            width: 100%;
-            height: 100%;
-        }
-        @font-face {
-            font-family: 'sairaStencil';
-            src: url('assets/fonts/SairaStencil/SairaStencil-Medium.ttf') format('truetype');
-            font-display: block;
-        }
-        body {
-            font-family: 'sairaStencil', sans-serif;
-        }
-        .privacy-link {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            color: #8888ff;
-            text-decoration: underline;
-            font-size: 14px;
-            font-family: 'sairaStencil', sans-serif;
-            opacity: 0.7;
-            z-index: 1000;
-            transition: opacity 0.2s;
-        }
-        .privacy-link:hover {
-            opacity: 1;
-        }
-    </style>
-</head>
-<body>
-    <div id="game-container"></div>
-    <a href="/privacy.html" class="privacy-link">Privacy Policy</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#182841" />
+    <title>Space Maze · KiwiPlay</title>
+    <link rel="icon" href="../shared/kiwi.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/play.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="mainMenu">
+      <header class="play-header">
+        <a href="../" class="brand"
+          ><img
+            src="../shared/kiwi.svg"
+            width="36"
+            height="36"
+            alt=""
+          />KiwiPlay</a
+        ><button
+          class="control sound-control"
+          data-sound
+          type="button"
+          aria-label="Turn sound off"
+        ></button>
+      </header>
+      <div class="menu-heading">
+        <h1>Space Maze</h1>
+      </div>
+      <div class="galaxy">
+        <div class="galaxy-intro">
+          <img src="assets/ship.webp" width="60" height="60" alt="" />
+        </div>
+        <div id="levels" class="level-grid" aria-label="Choose a maze"></div>
+      </div>
+      <footer class="play-footer">
+        <a href="../privacy.html">Privacy</a>
+      </footer>
+    </main>
+    <section id="gameScreen" hidden aria-label="Space maze game">
+      <header class="game-toolbar">
+        <button id="backButton" class="control" aria-label="Back to menu">
+          ←</button
+        ><span id="levelLabel" class="game-label"></span
+        ><button
+          class="control sound-control"
+          data-sound
+          type="button"
+          aria-label="Turn sound off"
+        ></button>
+      </header>
+      <p class="sr-only">Follow the little lights to the star</p>
+      <div class="maze-wrap">
+        <canvas
+          id="maze"
+          tabindex="0"
+          role="img"
+          aria-label="Space maze. Use arrow keys, swipe, or tap a lit space to move the rocket."
+          aria-describedby="positionStatus"
+          >Use the arrow buttons below to move the rocket through the
+          maze.</canvas
+        >
+      </div>
+      <p id="positionStatus" class="sr-only" role="status"></p>
+      <div class="direction-pad" aria-label="Move the rocket">
+        <button class="control up" data-direction="top" aria-label="Move up">
+          ↑</button
+        ><button
+          class="control left"
+          data-direction="left"
+          aria-label="Move left"
+        >
+          ←</button
+        ><button
+          class="control down"
+          data-direction="bottom"
+          aria-label="Move down"
+        >
+          ↓</button
+        ><button
+          class="control right"
+          data-direction="right"
+          aria-label="Move right"
+        >
+          →
+        </button>
+      </div>
+    </section>
+    <dialog id="finishPopup" aria-labelledby="finishTitle">
+      <div class="celebration" aria-hidden="true">✦</div>
+      <h2 id="finishTitle" class="sr-only">Star found</h2>
+      <div class="dialog-actions">
+        <button class="secondary" id="exitButton" aria-label="Back to menu">
+          ←</button
+        ><button class="primary" id="nextButton" aria-label="Next maze">
+          →
+        </button>
+      </div>
+    </dialog>
+    <script src="../shared/play.js"></script>
     <script src="js/config.js"></script>
     <script src="js/mazeGenerator.js"></script>
-    <script src="js/preload.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/game.js"></script>
+    <script src="js/run.js"></script>
+    <script src="js/renderer.js"></script>
     <script src="js/main.js"></script>
-</body>
+  </body>
 </html>

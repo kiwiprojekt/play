@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "cache-manifest": "node scripts/update-precache.js",
+    "check:assets": "python3 scripts/check-assets.py"
   },
   "repository": {
     "type": "git",
@@ -15,7 +17,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/kiwiprojekt/play/issues"
@@ -24,5 +26,13 @@
   "devDependencies": {
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.js"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ]
   }
 }

@@ -1,0 +1,133 @@
+/** @jest-environment jsdom */
+const fs = require("fs");
+const path = require("path");
+const MazeGenerator = require("../space-maze/js/mazeGenerator.js");
+const { MazeRun, DIRECTIONS } = require("../space-maze/js/run.js");
+let renderer;
+
+beforeAll(() => {
+  document.body.innerHTML = fs
+    .readFileSync(path.join(__dirname, "../space-maze/index.html"), "utf8")
+    .split("<body>")[1]
+    .split("</body>")[0];
+  global.KiwiPlay = require("../shared/play.js");
+  global.MazeConfig = require("../space-maze/js/config.js");
+  global.MazeGenerator = MazeGenerator;
+  global.MazeRun = MazeRun;
+  // The browser checks exercise canvas rendering. These tests isolate navigation/state.
+  global.MazeRenderer = class {
+    constructor() {
+      renderer = this;
+    }
+    cancel() {}
+    resize() {}
+    setRun(run) {
+      this.run = run;
+    }
+    animate(from, done) {
+      done();
+    }
+  };
+  require("../space-maze/js/main.js");
+});
+
+beforeEach(() => {
+  localStorage.clear();
+  document.getElementById("backButton").click();
+});
+
+function completeCurrentMaze() {
+  const run = renderer.run;
+  const pending = [{ x: 0, y: 0, steps: [] }];
+  const seen = new Set(["0,0"]);
+  while (pending.length) {
+    const current = pending.shift();
+    if (current.x === run.cols - 1 && current.y === run.rows - 1) {
+      current.steps.forEach((direction) =>
+        document.querySelector(`[data-direction="${direction}"]`).click(),
+      );
+      return;
+    }
+    for (const [direction, step] of Object.entries(DIRECTIONS)) {
+      if (run.grid[current.y][current.x].walls[direction]) continue;
+      const x = current.x + step.x,
+        y = current.y + step.y;
+      if (!seen.has(`${x},${y}`)) {
+        seen.add(`${x},${y}`);
+        pending.push({ x, y, steps: [...current.steps, direction] });
+      }
+    }
+  }
+  throw new Error("No path to goal");
+}
+
+it("finishing maze 1 offers maze 2 without skipping a level", () => {
+  document.querySelector('[data-level="1"]').click();
+  completeCurrentMaze();
+  expect(document.getElementById("finishPopup").open).toBe(true);
+  document.getElementById("nextButton").click();
+  expect(document.getElementById("levelLabel").textContent).toBe("2 · Sirius");
+  expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+  expect(document.getElementById("finishPopup").open).toBe(false);
+});
+it("all 20 mazes remain available and the final maze can be replayed", () => {
+  document.getElementById("backButton").click();
+  expect(document.querySelectorAll(".star-level")).toHaveLength(20);
+  document.querySelector('[data-level="20"]').click();
+  completeCurrentMaze();
+  expect(document.getElementById("nextButton").textContent).toBe("↻");
+  document.getElementById("nextButton").click();
+  expect(document.getElementById("levelLabel").textContent).toBe("20 · Castor");
+});
+
+it("records only the mazes actually completed when levels are played out of order", () => {
+  document.querySelector('[data-level="1"]').click();
+  completeCurrentMaze();
+  document.getElementById("backButton").click();
+  document.querySelector('[data-level="20"]').click();
+  completeCurrentMaze();
+  expect(
+    JSON.parse(localStorage.getItem("spaceMazeCompletedLevels")).sort(
+      (a, b) => a - b,
+    ),
+  ).toEqual([1, 20]);
+  document.getElementById("backButton").click();
+  expect(document.querySelectorAll(".completed")).toHaveLength(2);
+});
+
+it("migrates progress from the older sequential unlock model", () => {
+  localStorage.setItem("spaceMazeCompleted", "3");
+  document.getElementById("backButton").click();
+  expect(document.querySelectorAll(".completed")).toHaveLength(3);
+  document.querySelector('[data-level="5"]').click();
+  completeCurrentMaze();
+  expect(JSON.parse(localStorage.getItem("spaceMazeCompletedLevels"))).toEqual([
+    1, 2, 3, 5,
+  ]);
+});
+
+it("invalid saved progress cannot block the menu", () => {
+  localStorage.setItem("spaceMazeCompletedLevels", "broken");
+  document.getElementById("backButton").click();
+  expect(document.querySelectorAll(".completed")).toHaveLength(0);
+  expect(document.querySelectorAll(".star-level")).toHaveLength(20);
+});
+
+it("resumes a move interrupted by browser navigation", () => {
+  document.querySelector('[data-level="1"]').click();
+  let pending;
+  renderer.animate = (from, done) => { pending = done; };
+  const direction = Object.keys(DIRECTIONS).find((key) => renderer.run.canMove(key));
+  document.querySelector(`[data-direction="${direction}"]`).click();
+  expect(pending).toBeDefined();
+  const moved = { ...renderer.run.position };
+  window.dispatchEvent(new Event("pagehide"));
+  const restored = new Event("pageshow");
+  Object.defineProperty(restored, "persisted", { value: true });
+  window.dispatchEvent(restored);
+  expect(renderer.run.position).toEqual(moved);
+  const back = { top: "bottom", bottom: "top", left: "right", right: "left" }[direction];
+  renderer.animate = (from, done) => done();
+  document.querySelector(`[data-direction="${back}"]`).click();
+  expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+});

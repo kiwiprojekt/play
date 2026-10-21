@@ -1,55 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kids Memo</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <main class="app">
-    <section id="mainScreen" class="screen active">
-      <header class="toolbar menu-toolbar">
-        <a href="https://play.kiwiprojekt.pl" class="icon-button menu-back">🥝 KiwiPlay</a>
-        <div class="menu-spacer"></div>
-        <button id="muteButtonMenu" class="icon-button" type="button" aria-pressed="false"></button>
-      </header>
-      <h1 class="title">Memo Game</h1>
-      <div class="level-grid">
-        <button type="button" class="level-button" data-level="1"></button>
-        <button type="button" class="level-button" data-level="2"></button>
-        <button type="button" class="level-button" data-level="3"></button>
-        <button type="button" class="level-button" data-level="4"></button>
-      <footer class="game-footer" style="margin-top: 30px; text-align: center; z-index: 10;">
-        <a href="/privacy.html" style="color: var(--text); text-decoration: underline; font-family: var(--font-ui); font-size: 0.7rem; font-weight: bold; opacity: 0.8;">Privacy Policy</a>
-      </footer>
-    </section>
-
-    <section id="gameScreen" class="screen">
-      <header class="toolbar">
-        <button id="backButton" class="icon-button" type="button">← Back</button>
-        <div id="levelLabel" class="level-label">Transportation</div>
-        <button id="muteButton" class="icon-button" type="button" aria-pressed="false"></button>
-      </header>
-      <div class="board-wrap">
-        <section id="board" class="board" aria-label="Memory game board"></section>
-      </div>
-    </section>
-  </main>
-
-  <div id="finishPopup" class="popup hidden" role="dialog" aria-modal="true" aria-labelledby="finishTitle">
-    <div class="popup-content">
-      <h2 id="finishTitle">Great job!</h2>
-      <div class="popup-actions">
-        <button id="exitButton" type="button">←</button>
-        <button id="nextButton" type="button">
-          <span class="progress-bar"></span>
-          <span class="button-text">→</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#326c48" />
+    <title>Memory Match · KiwiPlay</title>
+    <link rel="icon" href="../shared/kiwi.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/play.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section id="mainScreen" class="screen active">
+        <header class="play-header">
+          <a href="../" class="brand"
+            ><img
+              src="../shared/kiwi.svg"
+              width="36"
+              height="36"
+              alt=""
+            />KiwiPlay</a
+          >
+          <button
+            id="muteButtonMenu"
+            class="control sound-control"
+            data-sound
+            type="button"
+            aria-label="Turn sound off"
+          ></button>
+        </header>
+        <div class="menu-heading">
+          <h1>Memory Match</h1>
+        </div>
+        <div class="choice-row" aria-label="How many pairs?">
+          <button type="button" data-pairs="3" aria-pressed="false">
+            3 pairs
+          </button>
+          <button type="button" data-pairs="6" aria-pressed="false">
+            6 pairs
+          </button>
+          <button type="button" data-pairs="all" aria-pressed="true">
+            All pairs
+          </button>
+        </div>
+        <div class="level-grid">
+          <button type="button" class="level-button" data-level="1"></button>
+          <button type="button" class="level-button" data-level="2"></button>
+          <button type="button" class="level-button" data-level="3"></button>
+          <button type="button" class="level-button" data-level="4"></button>
+        </div>
+        <footer class="play-footer">
+          <a href="../privacy.html">Privacy</a>
+        </footer>
+      </section>
+      <section id="gameScreen" class="screen">
+        <header class="game-toolbar">
+          <button
+            id="backButton"
+            class="control"
+            type="button"
+            aria-label="Back to menu"
+          >
+            ←
+          </button>
+          <div id="levelLabel" class="game-label">Transportation</div>
+          <button
+            id="muteButton"
+            class="control sound-control"
+            data-sound
+            type="button"
+            aria-label="Turn sound off"
+          ></button>
+        </header>
+        <p id="matchProgress" class="match-progress" role="status">
+          Find a pair
+        </p>
+        <div class="board-wrap">
+          <section
+            id="board"
+            class="board"
+            aria-label="Memory game board"
+          ></section>
+        </div>
+      </section>
+    </main>
+    <dialog id="finishPopup" aria-labelledby="finishTitle">
+      <div class="celebration" aria-hidden="true">✦</div>
+      <h2 id="finishTitle" class="sr-only">All pairs found</h2>
+      <div class="dialog-actions">
+        <button
+          id="exitButton"
+          class="secondary"
+          type="button"
+          aria-label="Back to menu"
+        >
+          ←</button
+        ><button
+          id="replayButton"
+          class="primary"
+          type="button"
+          aria-label="Play again"
+        >
+          ↻
         </button>
+        <button id="nextButton" class="primary" type="button" aria-label="Next theme">→</button>
       </div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    </dialog>
+    <script src="../shared/play.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
