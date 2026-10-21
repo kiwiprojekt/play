@@ -29,7 +29,7 @@ Sizes below describe uncompressed files. They do not represent measured frame ra
 | Files                 | Before                            | After                                           |
 | --------------------- | --------------------------------- | ----------------------------------------------- |
 | Raster artwork        | 59 PNGs, 99,759,796 bytes         | 53 WebP images, 1,527,138 bytes                 |
-| Maze JavaScript       | 1,194,494 bytes, including Phaser | 15,793 bytes plus 4,920 bytes of shared helpers |
+| Maze JavaScript       | 1,194,494 bytes, including Phaser | 15,793 bytes plus 4,996 bytes of shared helpers |
 | Complete offline pack | Game content was excluded         | About 2 MB for all three games                  |
 
 The artwork reduction is 98.5%. This combines image conversion, smaller image dimensions, and removal of unused assets.
@@ -57,7 +57,7 @@ The Polish numbered groups cover all 32 Polish letters and exclude Q, V, and X.
 
 ## Validation
 
-- Jest: 164 tests pass across eight suites.
+- Jest: 165 tests pass across eight suites.
 - Asset checks pass for 192 HTML links, stylesheet references, memory images, and offline files.
 - Browser checks use only the Codex harness.
 - Checked every full memory theme at 375 × 667, 667 × 375, 1280 × 720, and 3840 × 2160.
@@ -95,3 +95,7 @@ The scene lifecycle review used [Phaser scene documentation](https://docs.phaser
 
 The board sizing uses the actual container dimensions and a fixed grid shape for each card count.
 See [MDN ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) and [MDN size containment](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain).
+
+## CDN release consistency
+
+Live verification found that the CDN could retain an old homepage stylesheet after the new HTML was published. Release generation now stamps the same content-derived version onto HTML runtime references, the worker registration, and every offline URL. The worker uses that version for online requests too, so navigation receives the matching release through both CDN and browser caches. The version includes worker changes, and repeated generation is stable.

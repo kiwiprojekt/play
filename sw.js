@@ -1,7 +1,14 @@
-const CACHE_NAME = "kiwiplay-236e5a690a82";
+const CACHE_NAME = "kiwiplay-c2380d4a1c14";
+// A release uses one URL version across HTML, runtime files, and its offline pack.
+// This also avoids stale responses in a CDN cache outside the browser.
+function versionedURL(value) {
+  const url = new URL(value, self.location.origin);
+  url.searchParams.set("v", CACHE_NAME.slice("kiwiplay-".length));
+  return url.href;
+}
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    fetch("./precache.json", { cache: "no-store" })
+    fetch(versionedURL("./precache.json"), { cache: "no-store" })
       .then((response) => {
         if (!response.ok) throw new Error("Offline pack is unavailable");
         return response.json();
@@ -33,22 +40,23 @@ self.addEventListener("fetch", (event) => {
     new URL(event.request.url).origin !== self.location.origin
   )
     return;
+  const url = versionedURL(event.request.url);
   event.respondWith(
-    fetch(event.request, { cache: "no-cache" })
+    fetch(url, { cache: "no-cache" })
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
           event.waitUntil(
             caches
               .open(CACHE_NAME)
-              .then((cache) => cache.put(event.request, copy))
+              .then((cache) => cache.put(url, copy))
               .catch(() => {}),
           );
         }
         return response;
       })
       .catch(
-        async () => (await caches.match(event.request)) || Response.error(),
+        async () => (await caches.match(url)) || Response.error(),
       ),
   );
 });

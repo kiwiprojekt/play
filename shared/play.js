@@ -138,7 +138,10 @@
     updateSound();
     if ("serviceWorker" in navigator && document.currentScript) {
       navigator.serviceWorker
-        .register(new URL("../sw.js", document.currentScript.src))
+        .register(new URL(
+          "../sw.js" + new URL(document.currentScript.src).search,
+          document.currentScript.src,
+        ))
         .catch(() => {});
     }
   }

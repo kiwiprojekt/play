@@ -33,7 +33,7 @@ Run `python3 scripts/optimize-images.py` to convert new PNG artwork. The script 
 Update references after checking the converted images. Remove replaced PNG files when they are no longer needed.
 
 After changing game files or assets, run `npm run cache-manifest`. Commit the updated `precache.json` and `sw.js` together.
-The script calculates the cache version from the files. The service worker installs the complete pack before activating it.
+The script calculates a release version from the files and worker, then versions HTML runtime links and offline URLs. The service worker installs the complete pack before activating it.
 All three games work offline after the pack finishes downloading. Letter speech depends on the voices available on the device.
 
 ## Review
