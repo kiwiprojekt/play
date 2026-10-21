@@ -109,3 +109,11 @@ Memory theme selectors are square images without captions on desktop and phone l
 The shared context module owns URL presentation, Polish labels, navigation propagation, and worker startup. Game state stays in each game. The offline worker shares cached files between kiosk and normal URLs and preserves explicitly versioned asset requests during an update.
 
 Validation: 172 tests pass across nine suites; 200 asset/link references pass. Muted Codex browser checks cover normal mode, bare kiosk mode, Polish kiosk navigation through all three games, saved-English override, a complete ten-match Polish letter session, and all 24 memory cards fitting at 375 × 667, 667 × 375, and 1280 × 720.
+
+## Maze keyboard follow-up — October 21, 2026
+
+The maze hides on-screen arrows on desktop, retaining them for viewports up to 800 pixels wide and devices with a coarse primary pointer. Short desktop windows no longer reserve space for hidden arrows.
+
+Arrow clicks return focus to the canvas. Movement key events bubble through the game screen, so focusing another game control does not disable the keyboard. Menu and completion dialogs block movement; browser modifier shortcuts remain available.
+
+Validation: 175 tests pass. A muted Codex browser session verified a phone arrow click followed by an actual keyboard move, and desktop movement while the sound control had focus. Desktop hides the arrows while phone layouts retain them.

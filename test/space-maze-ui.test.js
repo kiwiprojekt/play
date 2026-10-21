@@ -131,3 +131,41 @@ it("resumes a move interrupted by browser navigation", () => {
   document.querySelector(`[data-direction="${back}"]`).click();
   expect(renderer.run.position).toEqual({ x: 0, y: 0 });
 });
+
+it("returns focus to the maze after an on-screen arrow and accepts the next keyboard move", () => {
+  document.querySelector('[data-level="1"]').click();
+  const direction = Object.keys(DIRECTIONS).find((key) => renderer.run.canMove(key));
+  const arrow = document.querySelector(`[data-direction="${direction}"]`);
+  arrow.focus();
+  arrow.click();
+  const canvas = document.getElementById("maze");
+  expect(document.activeElement).toBe(canvas);
+  const reverse = { top: "ArrowDown", bottom: "ArrowUp", left: "ArrowRight", right: "ArrowLeft" }[direction];
+  document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: reverse, bubbles: true, cancelable: true }));
+  expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+});
+
+it("accepts movement while another game control has focus without intercepting browser shortcuts", () => {
+  document.querySelector('[data-level="1"]').click();
+  const direction = Object.keys(DIRECTIONS).find((key) => renderer.run.canMove(key));
+  const key = { top: "ArrowUp", bottom: "ArrowDown", left: "ArrowLeft", right: "ArrowRight" }[direction];
+  const control = document.querySelector('#gameScreen [data-sound]');
+  control.focus();
+  const shortcut = new KeyboardEvent("keydown", { key, ctrlKey: true, bubbles: true, cancelable: true });
+  control.dispatchEvent(shortcut);
+  expect(shortcut.defaultPrevented).toBe(false);
+  expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+  control.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true }));
+  expect(renderer.run.position).toEqual({ x: DIRECTIONS[direction].x, y: DIRECTIONS[direction].y });
+});
+
+it("does not move behind the menu or a completion dialog", () => {
+  document.querySelector('[data-level="1"]').click();
+  const key = renderer.run.canMove("right") ? "ArrowRight" : "ArrowDown";
+  document.getElementById("finishPopup").showModal();
+  document.getElementById("maze").dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true }));
+  expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+  document.getElementById("backButton").click();
+  document.getElementById("maze").dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true }));
+  expect(renderer.run.position).toEqual({ x: 0, y: 0 });
+});

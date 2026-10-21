@@ -123,7 +123,10 @@ function renderMazeLevels() {
 document
   .querySelectorAll("[data-direction]")
   .forEach((button) =>
-    button.addEventListener("click", () => moveShip(button.dataset.direction)),
+    button.addEventListener("click", () => {
+      moveShip(button.dataset.direction);
+      mazeCanvas.focus({ preventScroll: true });
+    }),
   );
 document.getElementById("backButton").addEventListener("click", showMazeMenu);
 document.getElementById("exitButton").addEventListener("click", showMazeMenu);
@@ -143,7 +146,11 @@ const mazeKeys = {
   a: "left",
   d: "right",
 };
-mazeCanvas.addEventListener("keydown", (event) => {
+mazeScreen.addEventListener("keydown", (event) => {
+  if (
+    mazeScreen.hidden || mazeDialog.open ||
+    event.altKey || event.ctrlKey || event.metaKey
+  ) return;
   if (mazeKeys[event.key]) {
     event.preventDefault();
     moveShip(mazeKeys[event.key]);
