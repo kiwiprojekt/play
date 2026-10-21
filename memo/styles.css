@@ -180,3 +180,8 @@ body {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+.kiosk #mainScreen .menu-heading {
+  margin-left: 20px;
+  margin-right: 20px;
+}

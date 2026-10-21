@@ -1,4 +1,4 @@
-const CACHE_NAME = "kiwiplay-9bb229f928c7";
+const CACHE_NAME = "kiwiplay-8cef56d83a57";
 // A release uses one URL version across HTML, runtime files, and its offline pack.
 // This also avoids stale responses in a CDN cache outside the browser.
 function versionedURL(value) {
